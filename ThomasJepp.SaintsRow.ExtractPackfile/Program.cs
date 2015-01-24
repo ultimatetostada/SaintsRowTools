@@ -44,7 +44,7 @@ namespace ThomasJepp.SaintsRow.ExtractPackfile
             {
                 var packfile = Packfile.FromStream(stream, Path.GetExtension(options.Source) == ".str2_pc");
 
-                string folderName = (options.Output != null) ? options.Output : Path.GetFileName(args[0]);
+                string folderName = (options.Output != null) ? options.Output : "extracted-" + Path.GetFileName(options.Source);
 
                 Console.WriteLine("Extracting {0} to {1}.", options.Source, folderName);
 

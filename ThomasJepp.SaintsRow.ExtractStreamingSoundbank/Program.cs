@@ -23,7 +23,7 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
             [CommandLineParameter(Name = "output", ParameterIndex = 2, Required = false, Description = "The location to save the extracted data. If not specified, the packfile will be extracted to a new folder with the same name in the current directory.")]
             public string Output { get; set; }
 
-            [CommandLineParameter(Command = "convert", Default = false, Description = "Convert the audio into playble OGG files. Requires ww2ogg and revorb in the same directory.", Name = "Convert audio")]
+            [CommandLineParameter(Command = "convert", Default = true, Description = "Convert the audio into playble OGG files. Requires ww2ogg and revorb in the same directory.", Name = "Convert audio")]
             public bool ConvertAudio { get; set; }
         }
 
@@ -88,7 +88,7 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
 
                 string bnkName = Path.GetFileName(options.Source);
 
-                string folderName = (options.Output != null) ? options.Output : bnkName;
+                string folderName = (options.Output != null) ? options.Output : "extracted-" + bnkName;
 
                 Console.WriteLine("Extracting {0} to {1}.", options.Source, folderName);
 
@@ -156,30 +156,33 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
                     }
                 }
 
-                Console.WriteLine();
-                Console.WriteLine("Converting extracted audio...");
-                for (int i = 1; i <= bnk.Files.Count; i++)
+                if (options.ConvertAudio)
                 {
-                    Console.Write("[{0}/{1}] Converting audio... ", i, bnk.Files.Count);
-                    string oggFilename = String.Format("{0}_{1:D5}.ogg", bnkName, i);
-                    string oggPath = Path.Combine(folderName, oggFilename);
+                    Console.WriteLine();
+                    Console.WriteLine("Converting extracted audio...");
+                    for (int i = 1; i <= bnk.Files.Count; i++)
+                    {
+                        Console.Write("[{0}/{1}] Converting audio... ", i, bnk.Files.Count);
+                        string oggFilename = String.Format("{0}_{1:D5}.ogg", bnkName, i);
+                        string oggPath = Path.Combine(folderName, oggFilename);
 
-                    string audioFilename = String.Format("{0}_{1:D5}.wem", bnkName, i);
-                    string audioPath = Path.Combine(folderName, audioFilename);
+                        string audioFilename = String.Format("{0}_{1:D5}.wem", bnkName, i);
+                        string audioPath = Path.Combine(folderName, audioFilename);
 
-                    ProcessStartInfo ww2oggPsi = new ProcessStartInfo(ww2ogg, String.Format(@"--pcb ""{0}"" -o ""{1}"" ""{2}""", codebooks, oggPath, audioPath));
-                    ww2oggPsi.WindowStyle = ProcessWindowStyle.Hidden;
-                    ww2oggPsi.CreateNoWindow = true;
-                    Process ww2oggP = Process.Start(ww2oggPsi);
-                    ww2oggP.WaitForExit();
-                    Console.Write("revorb... ");
+                        ProcessStartInfo ww2oggPsi = new ProcessStartInfo(ww2ogg, String.Format(@"--pcb ""{0}"" -o ""{1}"" ""{2}""", codebooks, oggPath, audioPath));
+                        ww2oggPsi.WindowStyle = ProcessWindowStyle.Hidden;
+                        ww2oggPsi.CreateNoWindow = true;
+                        Process ww2oggP = Process.Start(ww2oggPsi);
+                        ww2oggP.WaitForExit();
+                        Console.Write("revorb... ");
 
-                    ProcessStartInfo revorbPsi = new ProcessStartInfo(revorb, String.Format(@"""{0}""", oggPath));
-                    revorbPsi.WindowStyle = ProcessWindowStyle.Hidden;
-                    revorbPsi.CreateNoWindow = true;
-                    Process revorbP = Process.Start(revorbPsi);
-                    revorbP.WaitForExit();
-                    Console.WriteLine("done.");
+                        ProcessStartInfo revorbPsi = new ProcessStartInfo(revorb, String.Format(@"""{0}""", oggPath));
+                        revorbPsi.WindowStyle = ProcessWindowStyle.Hidden;
+                        revorbPsi.CreateNoWindow = true;
+                        Process revorbP = Process.Start(revorbPsi);
+                        revorbP.WaitForExit();
+                        Console.WriteLine("done.");
+                    }
                 }
 
                 Console.WriteLine();

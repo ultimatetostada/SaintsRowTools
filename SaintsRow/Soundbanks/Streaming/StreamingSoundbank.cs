@@ -65,6 +65,7 @@ namespace ThomasJepp.SaintsRow.Soundbanks.Streaming
             entry.Info.AudioLength = (uint)audioStream.Length;
             m_AudioStreams.Add(audioStream);
             m_MetadataStreams.Add(null);
+            Files.Add(entry);
         }
 
         public void AddFile(uint id, Stream audioStream, Stream metadataStream)

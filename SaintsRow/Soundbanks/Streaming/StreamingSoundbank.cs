@@ -17,6 +17,8 @@ namespace ThomasJepp.SaintsRow.Soundbanks.Streaming
             DataStream = new MemoryStream();
             s.CopyTo(DataStream);
 
+            DataStream.Seek(0, SeekOrigin.Begin);
+
             Header = DataStream.ReadStruct<SoundbankHeader>();
 
             if (Header.Signature != 0x42535756)

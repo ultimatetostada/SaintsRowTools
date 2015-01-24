@@ -17,7 +17,7 @@ namespace ThomasJepp.SaintsRow.Soundbanks.Streaming
      * uint16 num files
      */
 
-    [StructLayout(LayoutKind.Explicit, Size = 0x1A)]
+    [StructLayout(LayoutKind.Explicit, Size = 0x1C)]
     public struct SoundbankHeader
     {
         [FieldOffset(0x00)]
@@ -42,6 +42,6 @@ namespace ThomasJepp.SaintsRow.Soundbanks.Streaming
         public UInt32 HeaderSize;
 
         [FieldOffset(0x18)]
-        public UInt16 NumFiles;
+        public UInt32 NumFiles;
     }
 }

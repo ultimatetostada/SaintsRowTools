@@ -200,13 +200,13 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version0A
                     }
                     else
                     {
-                        fileStart += data.Size.Align(16);
+                        fileStart += data.Size; //.Align(16);
                         if (!isLast)
                         {
-                            uncompressedSize += data.Size.Align(16);
-                            uint toSkip = data.Size.Align(16) - data.Size;
-                            for (int j = 0; j < toSkip; j++)
-                                dataStream.WriteByte(0);
+                            uncompressedSize += data.Size; //.Align(16);
+                            //uint toSkip = data.Size.Align(16) - data.Size;
+//                            for (int j = 0; j < toSkip; j++)
+                                //dataStream.WriteByte(0);
                         }
                         else
                         {

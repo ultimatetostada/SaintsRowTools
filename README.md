@@ -7,10 +7,12 @@ The ThomasJepp.SaintsRow library supports the following formats:
 | File type | Extensions | Support |
 |-----------|------------|---------|
 | Saints Row 2 PC Package files | .vpp_pc | Partial read only support |
-| Saints Row IV PC Package files | .vpp_pc, .str2_pc | Full read and write support |
-| Saints Row IV PC Asset Assembler files | .asm_pc | Full read and write support |
+| Saints Row IV and Saints Row: Gat out of Hell PC Package files | .vpp_pc, .str2_pc | Full read and write support |
+| Saints Row IV and Saints Row: Gat out of Hell PC Asset Assembler files | .asm_pc | Full read and write support |
 | Saints Row 2 PC Language Strings files | .le_strings | Full read and write support |
 | Saints Row: The Third, Saints Row IV and Saints Row: Gat out of Hell Language strings files | .le_strings | Full read and write support |
+| Saints Row: The Third, Saints Row IV and Saints Row: Gat out of Hell Streaming Soundbank files | ..._media.bnk_pc | Full read and write support |
+| Saints Row: The Third, Saints Row IV and Saints Row: Gat out of Hell Wwise Soundbank files | .bnk_pc | Partial read only support |
 
 ## Included tools
 ### Packages
@@ -25,7 +27,11 @@ The ThomasJepp.SaintsRow library supports the following formats:
 ### Language Strings
  - **ThomasJepp.SaintsRow.BuildStrings:** a command line tool that builds a language strings file from a text file in the right format.
  - **ThomasJepp.SaintsRow.ExtractStrings:** a command line tool that converts a language strings file to a text file that can be easily edited.
- 
+
+### Audio
+ - **ThomasJepp.SaintsRow.BuildStreamingSoundbank:** a command line tool for building a streaming soundbank from a set of .wem wwise audio tracks and an xml definition file
+ - **ThomasJepp.SaintsRow.ExtractStreamingSoundbank:** a command line tool for extracting a streaming soundbank - creates a set of .wem wwise audio tracks, converted .ogg audio tracks, metadata files and an xml definition file
+
 ### Other tools
  - **Saints Row IV Debug Print Hook:** a DLL file that provides simple output for Lua debug_print messages for Saints Row IV.
 

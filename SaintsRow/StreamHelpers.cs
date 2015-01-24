@@ -167,6 +167,25 @@ namespace ThomasJepp.SaintsRow
             }
         }
         #endregion
-    
+
+        #region Boolean helpers
+        public static bool ReadBoolean(this Stream stream)
+        {
+            return ReadBoolean(stream, 1);
+        }
+
+        public static bool ReadBoolean(this Stream stream, int length)
+        {
+            byte[] data = new byte[length];
+            switch (length)
+            {
+                case 1: return data[0] != 0;
+                case 2: return BitConverter.ToUInt16(data, 0) != 0;
+                case 4: return BitConverter.ToUInt32(data, 0) != 0;
+            }
+
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }

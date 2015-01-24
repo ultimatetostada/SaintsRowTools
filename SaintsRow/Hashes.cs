@@ -82,5 +82,49 @@ namespace ThomasJepp.SaintsRow
             }
             return hash;
         }
+
+        public static UInt32 AudiokineticHash(string input)
+        {
+            byte[] data = System.Text.Encoding.ASCII.GetBytes(input);
+
+            return AudiokineticHash(data);
+        }
+
+        public static UInt32 AudiokineticHash(byte[] input)
+        {
+            int length = 0;
+            if ((input.Length) <= 259)
+                length = input.Length;
+            else
+                length = 259;
+
+            byte[] buffer = new byte[259];
+            Array.Copy(input, buffer, length);
+
+            UInt32 hash = 0;
+            if (length != 0)
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    byte c = buffer[i];
+                    if (c >= 65 && c <= 90)
+                        buffer[i] = (byte)(c + 32);
+                }
+
+                hash = 2166136261;
+
+                for (int i = 0; i < length; i++)
+                {
+                    UInt32 c = (UInt32)buffer[i];
+                    hash = c ^ (16777619 * hash);
+                }
+
+                return (UInt32)hash;
+            }
+            else
+            {
+                return 0;
+            }
+        }
     }
 }

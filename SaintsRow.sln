@@ -43,6 +43,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Saves", "Saves", "{1DA55EE7
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThomasJepp.SaintsRow.ModSaveEditor", "ThomasJepp.SaintsRow.ModSaveEditor\ThomasJepp.SaintsRow.ModSaveEditor.csproj", "{C8BDC995-126F-431C-9AFF-83C7B3A53484}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashTester", "HashTester\HashTester.csproj", "{1740283B-664B-477C-8804-3AF4A06C4E42}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Audio", "Audio", "{9518BA6D-6E70-4554-8835-6BEB894358E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -193,6 +197,16 @@ Global
 		{C8BDC995-126F-431C-9AFF-83C7B3A53484}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{C8BDC995-126F-431C-9AFF-83C7B3A53484}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{C8BDC995-126F-431C-9AFF-83C7B3A53484}.Release|Win32.ActiveCfg = Release|Any CPU
+		{1740283B-664B-477C-8804-3AF4A06C4E42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1740283B-664B-477C-8804-3AF4A06C4E42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1740283B-664B-477C-8804-3AF4A06C4E42}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1740283B-664B-477C-8804-3AF4A06C4E42}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1740283B-664B-477C-8804-3AF4A06C4E42}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{1740283B-664B-477C-8804-3AF4A06C4E42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1740283B-664B-477C-8804-3AF4A06C4E42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1740283B-664B-477C-8804-3AF4A06C4E42}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1740283B-664B-477C-8804-3AF4A06C4E42}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{1740283B-664B-477C-8804-3AF4A06C4E42}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -210,5 +224,6 @@ Global
 		{82414533-0EF7-4835-A8E3-13D1A9F01497} = {5EFBD77F-625C-42BD-8644-D7D1AFD32619}
 		{BE9C6F24-51B9-4083-B11E-BF1BA236447B} = {75F9E01A-9820-4561-8B28-F5428D626B45}
 		{C8BDC995-126F-431C-9AFF-83C7B3A53484} = {1DA55EE7-CC27-4720-A93F-EFCE16747EDC}
+		{1740283B-664B-477C-8804-3AF4A06C4E42} = {1E3F6590-EB28-4A91-B692-260585D491FF}
 	EndGlobalSection
 EndGlobal

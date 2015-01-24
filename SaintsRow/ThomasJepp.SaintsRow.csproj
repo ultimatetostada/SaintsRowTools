@@ -68,6 +68,23 @@
     <Compile Include="Saves\SaintsRowIVMod\SectionId.cs" />
     <Compile Include="Saves\SaintsRowIVMod\Sections\PlayerSection.cs" />
     <Compile Include="Saves\SaintsRowIVMod\Sections\Player\SavedPlayerData.cs" />
+    <Compile Include="Soundbanks\Streaming\SoundbankFileInfo.cs" />
+    <Compile Include="Soundbanks\Streaming\SoundbankHeader.cs" />
+    <Compile Include="Soundbanks\Streaming\StreamingSoundbank.cs" />
+    <Compile Include="Soundbanks\Wwise\SectionId.cs" />
+    <Compile Include="Soundbanks\Wwise\ISoundbankSection.cs" />
+    <Compile Include="Soundbanks\Wwise\Sections\BKHDSection.cs" />
+    <Compile Include="Soundbanks\Wwise\Sections\BKHD\BKHDHeader.cs" />
+    <Compile Include="Soundbanks\Wwise\Sections\ENVSSection.cs" />
+    <Compile Include="Soundbanks\Wwise\Sections\HIRC\SwitchContainerObject.cs" />
+    <Compile Include="Soundbanks\Wwise\Sections\STMGSection.cs" />
+    <Compile Include="Soundbanks\Wwise\Sections\HIRCSection.cs" />
+    <Compile Include="Soundbanks\Wwise\Sections\HIRC\GenericObject.cs" />
+    <Compile Include="Soundbanks\Wwise\Sections\HIRC\HIRCObject.cs" />
+    <Compile Include="Soundbanks\Wwise\Sections\HIRC\HIRCType.cs" />
+    <Compile Include="Soundbanks\Wwise\Sections\HIRC\IHIRCObject.cs" />
+    <Compile Include="Soundbanks\Wwise\Sections\HIRC\SoundFXObject.cs" />
+    <Compile Include="Soundbanks\Wwise\WwiseSoundbank.cs" />
     <Compile Include="Stream2\ContainerFlags.cs" />
     <Compile Include="Stream2\Container.cs" />
     <Compile Include="Stream2\ContainerFileHeader.cs" />
@@ -84,6 +101,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Soundbanks\Wwise\Sections\STMG\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -14,7 +14,7 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
 {
     class Program
     {
-        [CommandLineArguments(Program = "ThomasJepp.SaintsRow.ExtractStreamingSoundbank", Title = "Saints Row Streaming Packfile Extractor", Description = "Extracts Saints Row PC packfiles (vpp_pc and str2_pc files). Supports Saints Row The Third, Saints Row IV and Saints Row Gat Out Of Hell.")]
+        [CommandLineArguments(Program = "ThomasJepp.SaintsRow.ExtractStreamingSoundbank", Title = "Saints Row Streaming Soundbank Extractor", Description = "Extracts Saints Row PC Streaming Soundbanks (..._media.bnk_pc files). Supports Saints Row The Third, Saints Row IV and Saints Row Gat Out Of Hell.")]
         internal class Options
         {
             [CommandLineParameter(Name = "soundbank", ParameterIndex = 1, Required = true, Description = "The soundbank to unpack.")]
@@ -94,7 +94,10 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
 
                 Directory.CreateDirectory(folderName);
 
-                using (Stream xmlStream = File.OpenWrite(Path.Combine(folderName, String.Format("{0}.xml", bnkName))))
+                if (File.Exists(Path.Combine(folderName, String.Format("{0}.xml", bnkName))))
+                    File.Delete(Path.Combine(folderName, String.Format("{0}.xml", bnkName)));
+
+                using (Stream xmlStream = File.OpenWrite(Path.Combine(folderName, Path.ChangeExtension(bnkName, "xml"))))
                 {
                     XmlWriterSettings settings = new XmlWriterSettings();
                     settings.Indent = true;
@@ -105,28 +108,24 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
                     {
                         writer.WriteStartDocument();
                         writer.WriteStartElement("soundbank");
-                        writer.WriteAttributeString("platform", bnk.Header.Platform.ToString());
-                        writer.WriteAttributeString("timestamp", bnk.Header.Timestamp.ToString());
-                        writer.WriteAttributeString("version", bnk.Header.Version.ToString());
-                        writer.WriteAttributeString("cruncherVersion", bnk.Header.CruncherVersion.ToString());
                         writer.WriteAttributeString("wwiseId", bnk.Header.WwiseBankId.ToString());
 
                         //writer.WriteAttributeString()
                         int currentFile = 0;
-                        foreach (SoundbankFileInfo fInfo in bnk.Files)
+                        foreach (SoundbankEntry entry in bnk.Files)
                         {
                             writer.WriteStartElement("file");
                             currentFile++;
 
-                            writer.WriteAttributeString("id", fInfo.FileId.ToString());
+                            writer.WriteAttributeString("id", entry.Info.FileId.ToString());
 
-                            if (fInfo.MetadataLength != 0)
+                            if (entry.Info.MetadataLength != 0)
                             {
                                 Console.Write("[{0}/{1}] Extracting metadata... ", currentFile, bnk.Files.Count);
                                 string metadataFilename = String.Format("{0}_{1:D5}.metadata", bnkName, currentFile);
                                 using (Stream outputStream = File.OpenWrite(Path.Combine(folderName, metadataFilename)))
                                 {
-                                    using (Stream inputStream = bnk.GetMetadataStream(fInfo))
+                                    using (Stream inputStream = entry.GetMetadataStream())
                                     {
                                         inputStream.CopyTo(outputStream);
                                     }
@@ -140,7 +139,7 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
                             string audioFilename = String.Format("{0}_{1:D5}.wem", bnkName, currentFile);
                             using (Stream outputStream = File.OpenWrite(Path.Combine(folderName, audioFilename)))
                             {
-                                using (Stream inputStream = bnk.GetAudioStream(fInfo))
+                                using (Stream inputStream = entry.GetAudioStream())
                                 {
                                     inputStream.CopyTo(outputStream);
                                 }

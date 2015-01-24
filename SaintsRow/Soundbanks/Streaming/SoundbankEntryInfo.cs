@@ -14,7 +14,7 @@ namespace ThomasJepp.SaintsRow.Soundbanks.Streaming
      */
 
     [StructLayout(LayoutKind.Explicit, Size = 0x10)]
-    public struct SoundbankFileInfo
+    public struct SoundbankEntryInfo
     {
         [FieldOffset(0x00)]
         public UInt32 FileId;

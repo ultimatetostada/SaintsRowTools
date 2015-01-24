@@ -89,7 +89,12 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version0A
         public void Dispose()
         {
             if (DataOffset == 0)
-                DataStream.Dispose();
+            {
+                if (DataStream != null)
+                {
+                    DataStream.Dispose();
+                }
+            }
         }
 
         public List<IPackfileEntry> Files

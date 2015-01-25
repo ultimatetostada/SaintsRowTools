@@ -57,29 +57,31 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
             string ww2ogg = Path.Combine(ExeLocation, "ww2ogg.exe");
             string codebooks = Path.Combine(ExeLocation, "packed_codebooks_aoTuV_603.bin");
             string revorb = Path.Combine(ExeLocation, "revorb.exe");
+            bool failedToFindConversionRequirements = false;
             if (options.ConvertAudio)
             {
-                bool failed = false;
                 if (!File.Exists(ww2ogg))
                 {
                     Console.WriteLine("Could not find ww2ogg.exe at:\n{0}", ww2ogg);
-                    failed = true;
+                    failedToFindConversionRequirements = true;
                 }
 
                 if (!File.Exists(codebooks))
                 {
                     Console.WriteLine("Could not find packed_codebooks_aoTuV_603.bin at:\n{0}", codebooks);
-                    failed = true;
+                    failedToFindConversionRequirements = true;
                 }
 
                 if (!File.Exists(revorb))
                 {
                     Console.WriteLine("Could not find revorb.exe at:\n{0}", revorb);
-                    failed = true;
+                    failedToFindConversionRequirements = true;
                 }
 
-                if (failed)
-                    return;
+                if (failedToFindConversionRequirements)
+                {
+                    Console.WriteLine("Can't convert audio.");
+                }
             }
 
             using (Stream stream = File.OpenRead(options.Source))
@@ -158,30 +160,38 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
 
                 if (options.ConvertAudio)
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("Converting extracted audio...");
-                    for (int i = 1; i <= bnk.Files.Count; i++)
+                    if (failedToFindConversionRequirements)
                     {
-                        Console.Write("[{0}/{1}] Converting audio... ", i, bnk.Files.Count);
-                        string oggFilename = String.Format("{0}_{1:D5}.ogg", bnkName, i);
-                        string oggPath = Path.Combine(folderName, oggFilename);
+                        Console.WriteLine();
+                        Console.WriteLine("Unable to convert extracted audio due to missing required files.");
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Converting extracted audio...");
+                        for (int i = 1; i <= bnk.Files.Count; i++)
+                        {
+                            Console.Write("[{0}/{1}] Converting audio... ", i, bnk.Files.Count);
+                            string oggFilename = String.Format("{0}_{1:D5}.ogg", bnkName, i);
+                            string oggPath = Path.Combine(folderName, oggFilename);
 
-                        string audioFilename = String.Format("{0}_{1:D5}.wem", bnkName, i);
-                        string audioPath = Path.Combine(folderName, audioFilename);
+                            string audioFilename = String.Format("{0}_{1:D5}.wem", bnkName, i);
+                            string audioPath = Path.Combine(folderName, audioFilename);
 
-                        ProcessStartInfo ww2oggPsi = new ProcessStartInfo(ww2ogg, String.Format(@"--pcb ""{0}"" -o ""{1}"" ""{2}""", codebooks, oggPath, audioPath));
-                        ww2oggPsi.WindowStyle = ProcessWindowStyle.Hidden;
-                        ww2oggPsi.CreateNoWindow = true;
-                        Process ww2oggP = Process.Start(ww2oggPsi);
-                        ww2oggP.WaitForExit();
-                        Console.Write("revorb... ");
+                            ProcessStartInfo ww2oggPsi = new ProcessStartInfo(ww2ogg, String.Format(@"--pcb ""{0}"" -o ""{1}"" ""{2}""", codebooks, oggPath, audioPath));
+                            ww2oggPsi.WindowStyle = ProcessWindowStyle.Hidden;
+                            ww2oggPsi.CreateNoWindow = true;
+                            Process ww2oggP = Process.Start(ww2oggPsi);
+                            ww2oggP.WaitForExit();
+                            Console.Write("revorb... ");
 
-                        ProcessStartInfo revorbPsi = new ProcessStartInfo(revorb, String.Format(@"""{0}""", oggPath));
-                        revorbPsi.WindowStyle = ProcessWindowStyle.Hidden;
-                        revorbPsi.CreateNoWindow = true;
-                        Process revorbP = Process.Start(revorbPsi);
-                        revorbP.WaitForExit();
-                        Console.WriteLine("done.");
+                            ProcessStartInfo revorbPsi = new ProcessStartInfo(revorb, String.Format(@"""{0}""", oggPath));
+                            revorbPsi.WindowStyle = ProcessWindowStyle.Hidden;
+                            revorbPsi.CreateNoWindow = true;
+                            Process revorbP = Process.Start(revorbPsi);
+                            revorbP.WaitForExit();
+                            Console.WriteLine("done.");
+                        }
                     }
                 }
 

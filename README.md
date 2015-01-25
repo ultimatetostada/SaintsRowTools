@@ -38,4 +38,4 @@ The ThomasJepp.SaintsRow library supports the following formats:
 ## Licenses
  - CmdLine is licensed under the Microsoft Public License as per https://www.nuget.org/packages/CmdLine. The license is included in the repository.
  - The Saints Row IV Debug Print Hook is based on the Saints Row: The Third Debug Print Hook. The original license for the Saints Row: The Third Debug Print hook is also included in the repository.
- - All other code is licensed under the WTFPL and may be used for any purpose.
+ - All other code is licensed under the license included in the repository as "license.txt".

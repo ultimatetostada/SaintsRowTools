@@ -108,8 +108,8 @@ namespace ThomasJepp.SaintsRow.Stream2Update
             }
 
             string str2Dir = options.Source;
-            if (Directory.Exists(Path.Combine(options.Source, "mods")))
-                str2Dir = Path.Combine(options.Source, "mods");
+            //if (Directory.Exists(Path.Combine(options.Source, "mods")))
+                //str2Dir = Path.Combine(options.Source, "mods");
 
             string[] str2Paths = Directory.GetFiles(str2Dir, "*.str2_pc");
 

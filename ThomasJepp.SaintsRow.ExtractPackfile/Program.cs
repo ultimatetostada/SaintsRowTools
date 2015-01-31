@@ -56,7 +56,7 @@ namespace ThomasJepp.SaintsRow.ExtractPackfile
                     currentFile++;
 
                     Console.Write("[{0}/{1}] Extracting {2}... ", currentFile, packfile.Files.Count, entry.Name);
-                    using (Stream outputStream = File.OpenWrite(Path.Combine(folderName, entry.Name)))
+                    using (Stream outputStream = File.Create(Path.Combine(folderName, entry.Name)))
                     {
                         using (Stream inputStream = entry.GetStream())
                         {

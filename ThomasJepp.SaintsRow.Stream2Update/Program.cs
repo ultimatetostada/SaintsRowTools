@@ -191,7 +191,7 @@ namespace ThomasJepp.SaintsRow.Stream2Update
                 Console.Write("[{0}/{1}] Saving {2}...", count, asmsToSave.Count, asmPair.Key);
                 string outPath = Path.Combine(str2Dir, asmPair.Key);
 
-                using (Stream outStream = File.OpenWrite(outPath))
+                using (Stream outStream = File.Create(outPath))
                 {
                     asmPair.Value.Save(outStream);
                 }

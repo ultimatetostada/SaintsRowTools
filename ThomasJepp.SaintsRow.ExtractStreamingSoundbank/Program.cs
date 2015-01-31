@@ -99,7 +99,7 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
                 if (File.Exists(Path.Combine(folderName, String.Format("{0}.xml", bnkName))))
                     File.Delete(Path.Combine(folderName, String.Format("{0}.xml", bnkName)));
 
-                using (Stream xmlStream = File.OpenWrite(Path.Combine(folderName, Path.ChangeExtension(bnkName, "xml"))))
+                using (Stream xmlStream = File.Create(Path.Combine(folderName, Path.ChangeExtension(bnkName, "xml"))))
                 {
                     XmlWriterSettings settings = new XmlWriterSettings();
                     settings.Indent = true;
@@ -125,7 +125,7 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
                             {
                                 Console.Write("[{0}/{1}] Extracting metadata... ", currentFile, bnk.Files.Count);
                                 string metadataFilename = String.Format("{0}_{1:D5}.metadata", bnkName, currentFile);
-                                using (Stream outputStream = File.OpenWrite(Path.Combine(folderName, metadataFilename)))
+                                using (Stream outputStream = File.Create(Path.Combine(folderName, metadataFilename)))
                                 {
                                     using (Stream inputStream = entry.GetMetadataStream())
                                     {
@@ -139,7 +139,7 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
 
                             Console.Write("[{0}/{1}] Extracting audio... ", currentFile, bnk.Files.Count);
                             string audioFilename = String.Format("{0}_{1:D5}.wem", bnkName, currentFile);
-                            using (Stream outputStream = File.OpenWrite(Path.Combine(folderName, audioFilename)))
+                            using (Stream outputStream = File.Create(Path.Combine(folderName, audioFilename)))
                             {
                                 using (Stream inputStream = entry.GetAudioStream())
                                 {

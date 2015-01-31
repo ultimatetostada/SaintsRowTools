@@ -76,9 +76,9 @@ namespace ThomasJepp.SaintsRow.BuildStreamingSoundbank
                         bank.AddFile(fileId, audioStream, metadataStream);
                     }
 
-                    using (Stream outStream = File.OpenWrite(bnkName))
+                    using (Stream outStream = File.Create(bnkName))
                     {
-                        using (Stream mbnkOutStream = File.OpenWrite(mbnkName))
+                        using (Stream mbnkOutStream = File.Create(mbnkName))
                         {
                             bank.Save(outStream, mbnkOutStream);
                         }

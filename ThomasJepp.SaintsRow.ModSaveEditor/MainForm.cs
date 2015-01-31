@@ -55,7 +55,7 @@ namespace ThomasJepp.SaintsRow.ModSaveEditor
         {
             if (File.Exists(FilePath))
                 File.Delete(FilePath);
-            using (Stream s = File.OpenWrite(FilePath))
+            using (Stream s = File.Create(FilePath))
             {
                 SaveFile.Save(s);
                 s.Flush();

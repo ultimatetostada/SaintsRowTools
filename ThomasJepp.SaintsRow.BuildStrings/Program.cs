@@ -87,7 +87,7 @@ namespace ThomasJepp.SaintsRow.BuildStrings
                 stringFile.AddString(hash, value);
             }
 
-            using (Stream s = File.OpenWrite(outputFile))
+            using (Stream s = File.Create(outputFile))
             {
                 stringFile.Save(s);
             }

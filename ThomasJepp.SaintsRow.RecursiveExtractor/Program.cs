@@ -85,7 +85,7 @@ namespace ThomasJepp.SaintsRow.RecursiveExtractor
                                     strCurrentFile++;
 
                                     Console.Write("[{0}/{1}] [{2}/{3}] Extracting {4}\\{5}: {6}", currentFile, totalFiles, strCurrentFile, strPackfile.Files.Count, packfilePair.Key, file.Name, strFile.Name);
-                                    using (Stream outputStream = File.OpenWrite(Path.Combine(strOutputFolder, strFile.Name)))
+                                    using (Stream outputStream = File.Create(Path.Combine(strOutputFolder, strFile.Name)))
                                     {
                                         using (Stream inputStream = strFile.GetStream())
                                         {
@@ -101,7 +101,7 @@ namespace ThomasJepp.SaintsRow.RecursiveExtractor
                     else
                     {
                         Console.Write("[{0}/{1}] Extracting {2}: {3}... ", currentFile, totalFiles, packfilePair.Key, file.Name);
-                        using (Stream outputStream = File.OpenWrite(Path.Combine(options.Output, packfilePair.Key, file.Name)))
+                        using (Stream outputStream = File.Create(Path.Combine(options.Output, packfilePair.Key, file.Name)))
                         {
                             using (Stream inputStream = file.GetStream())
                             {

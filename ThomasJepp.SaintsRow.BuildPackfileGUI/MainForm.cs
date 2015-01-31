@@ -311,7 +311,7 @@ namespace ThomasJepp.SaintsRow.BuildPackfileGUI
                 SetText("Updating asm_pc file: {0}", options.Asm);
                 packfile.Update(thisContainer);
 
-                using (Stream asmStream = File.OpenWrite(options.Asm))
+                using (Stream asmStream = File.Create(options.Asm))
                 {
                     asm.Save(asmStream);
                 }

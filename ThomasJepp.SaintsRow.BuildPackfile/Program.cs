@@ -177,7 +177,7 @@ namespace ThomasJepp.SaintsRow.BuildPackfile
                 Console.Write("Updating asm_pc file {0}... ", options.AsmFile);
                 packfile.Update(thisContainer);
 
-                using (Stream asmStream = File.OpenWrite(options.AsmFile))
+                using (Stream asmStream = File.Create(options.AsmFile))
                 {
                     asm.Save(asmStream);
                 }

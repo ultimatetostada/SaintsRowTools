@@ -111,7 +111,7 @@ namespace ThomasJepp.SaintsRow.Stream2
                             }
                         }
 
-                        using (Stream stream = File.OpenWrite(options.Source))
+                        using (Stream stream = File.Create(options.Source))
                         {
                             file.Save(stream);
                         }

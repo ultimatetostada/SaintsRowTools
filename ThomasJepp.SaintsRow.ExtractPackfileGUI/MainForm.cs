@@ -147,7 +147,7 @@ namespace ThomasJepp.SaintsRow.ExtractPackfileGUI
 
                 foreach (IPackfileEntry entry in packfile.Files)
                 {
-                    using (Stream outputStream = File.OpenWrite(Path.Combine(outputDir, entry.Name)))
+                    using (Stream outputStream = File.Create(Path.Combine(outputDir, entry.Name)))
                     {
                         using (Stream inputStream = entry.GetStream())
                         {

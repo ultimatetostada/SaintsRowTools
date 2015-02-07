@@ -57,6 +57,8 @@ namespace ThomasJepp.SaintsRow.Stream2
 
         public void Save(Stream stream)
         {
+            Header.NumContainers = (short)Containers.Count;
+
             stream.WriteStruct(Header);
 
             // Write allocator types

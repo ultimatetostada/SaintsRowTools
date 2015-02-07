@@ -14,6 +14,10 @@ namespace ThomasJepp.SaintsRow.Stream2
 
         public List<Container> Containers = new List<Container>();
 
+        public Stream2File()
+        {
+        }
+
         public Stream2File(Stream stream)
         {
             Header = stream.ReadStruct<ContainerFileHeader>();

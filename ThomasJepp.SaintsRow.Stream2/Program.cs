@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 
 using CmdLine;
 using ThomasJepp.SaintsRow.Packfiles;
@@ -12,8 +16,11 @@ namespace ThomasJepp.SaintsRow.Stream2
         [CommandLineParameter(Name = "source", ParameterIndex = 1, Required = true, Description = "The Stream2 Container to process.")]
         public string Source { get; set; }
 
-        [CommandLineParameter(Name = "action", ParameterIndex = 2, Required = true, Description = "The action to perform. Valid actions are \"dump\" and \"update\".")]
+        [CommandLineParameter(Name = "action", ParameterIndex = 2, Required = true, Description = "The action to perform. Valid actions are \"toasm\" \"toxml\", \"update\".")]
         public string Action { get; set; }
+
+        [CommandLineParameter(Name = "output", ParameterIndex = 3, Required = false, Description = "If the action is \"toasm\" or \"toxml\", this is used as the output. If not specified, the new file will be placed in the same directory as the source file.")]
+        public string Output { get; set; }
     }
 
     class Program
@@ -41,42 +48,205 @@ namespace ThomasJepp.SaintsRow.Stream2
 
             switch (options.Action)
             {
-                case "dump":
+                case "toxml":
                     {
                         using (Stream stream = File.OpenRead(options.Source))
                         {
                             Stream2File file = new Stream2File(stream);
 
-                            using (StreamWriter sw = new StreamWriter(options.Source + ".dump.txt"))
+                            if (options.Output == null || options.Output == "")
                             {
+                                options.Output = Path.ChangeExtension(options.Source, "xml");
+                            }
+
+                            XmlWriterSettings settings = new XmlWriterSettings();
+                            settings.Indent = true;
+                            settings.IndentChars = "\t";
+                            settings.NewLineChars = "\r\n";
+
+                            using (XmlWriter xml = XmlWriter.Create(options.Output, settings))
+                            {
+                                xml.WriteStartDocument();
+                                xml.WriteStartElement("AssetAssembler");
+
+                                xml.WriteStartElement("AllocatorTypes");
+                                foreach (var pair in file.AllocatorTypes)
+                                {
+                                    xml.WriteStartElement("AllocatorType");
+                                    xml.WriteAttributeString("ID", pair.Key.ToString());
+                                    xml.WriteAttributeString("Name", pair.Value);
+                                    xml.WriteEndElement();
+                                }
+                                xml.WriteEndElement(); // AllocatorTypes
+
+                                xml.WriteStartElement("ContainerTypes");
+                                foreach (var pair in file.ContainerTypes)
+                                {
+                                    xml.WriteStartElement("ContainerType");
+                                    xml.WriteAttributeString("ID", pair.Key.ToString());
+                                    xml.WriteAttributeString("Name", pair.Value);
+                                    xml.WriteEndElement();
+                                }
+                                xml.WriteEndElement(); // ContainerTypes
+
+                                xml.WriteStartElement("PrimitiveTypes");
+                                foreach (var pair in file.PrimitiveTypes)
+                                {
+                                    xml.WriteStartElement("PrimitiveType");
+                                    xml.WriteAttributeString("ID", pair.Key.ToString());
+                                    xml.WriteAttributeString("Name", pair.Value);
+                                    xml.WriteEndElement();
+                                }
+                                xml.WriteEndElement(); // PrimitiveTypes
+
+                                xml.WriteStartElement("Containers");
                                 foreach (var container in file.Containers)
                                 {
-                                    sw.WriteLine("{0}:", container.Name);
-                                    sw.WriteLine("\tContainerType: 0x{0:X2} ({0}) - {1}", container.ContainerType, file.ContainerTypes[container.ContainerType]);
-                                    sw.WriteLine("\tFlags: 0x{0:X4} ({0})", (UInt16)container.Flags);
-                                    sw.WriteLine("\tPrimitiveCount: 0x{0:X4} ({0})", container.PrimitiveCount);
-                                    sw.WriteLine("\tPackfileBaseOffset: 0x{0:X8} ({0})", container.PackfileBaseOffset);
-                                    sw.WriteLine("\tCompressionType: 0x{0:X2} ({0})", container.CompressionType);
-                                    sw.WriteLine("\tStubContainerParentName: {0}", container.StubContainerParentName);
-                                    sw.WriteLine("\tTotalCompressedPackfileReadSize: 0x{0:X8} ({0})", container.TotalCompressedPackfileReadSize);
-                                    sw.WriteLine();
+                                    xml.WriteStartElement("Container");
+                                    xml.WriteAttributeString("Name", container.Name);
+                                    xml.WriteAttributeString("Type", file.ContainerTypes[container.ContainerType]);
+                                    xml.WriteAttributeString("Flags", container.Flags.ToString());
+                                    xml.WriteAttributeString("PackfileBaseOffset", container.PackfileBaseOffset.ToString());
+                                    xml.WriteAttributeString("CompressionType", container.CompressionType.ToString());
+                                    xml.WriteAttributeString("StubContainerParentName", container.StubContainerParentName);
+                                    xml.WriteAttributeString("TotalCompressedPackfileReadSize", container.TotalCompressedPackfileReadSize.ToString());
+
+                                    if (container.AuxData.Length > 0)
+                                    {
+                                        xml.WriteStartElement("AuxData");
+                                        xml.WriteString(Convert.ToBase64String(container.AuxData, Base64FormattingOptions.None));
+                                        xml.WriteEndElement(); // AuxData
+                                    }
+
                                     for (int i = 0; i < container.PrimitiveCount; i++)
                                     {
                                         var primitive = container.Primitives[i];
                                         var sizes = container.PrimitiveSizes[i];
-                                        sw.WriteLine("\t{0}:", primitive.Name);
-                                        sw.WriteLine("\t\tType: 0x{0:X2} ({0}) - {1}", primitive.Data.Type, file.PrimitiveTypes[primitive.Data.Type]);
-                                        sw.WriteLine("\t\tAllocator: 0x{0:X2} ({0}) - {1}", primitive.Data.Allocator, primitive.Data.Allocator == 0 ? "none" : file.AllocatorTypes[primitive.Data.Allocator]);
-                                        sw.WriteLine("\t\tFlags: 0x{0:X2} ({0})", (byte)primitive.Data.Flags);
-                                        sw.WriteLine("\t\tExtensionIndex: 0x{0:X2} ({0})", primitive.Data.ExtensionIndex);
-                                        sw.WriteLine("\t\tCPUSize: 0x{0:X8} ({0})", primitive.Data.CPUSize);
-                                        sw.WriteLine("\t\tGPUSize: 0x{0:X8} ({0})", primitive.Data.GPUSize);
-                                        sw.WriteLine("\t\tAllocationGroup: 0x{0:X2} ({0})", primitive.Data.AllocationGroup);
-                                        sw.WriteLine("\t\tAlt CPUSize: 0x{0:X8} ({0})", sizes.CPUSize);
-                                        sw.WriteLine("\t\tAlt GPUSize: 0x{0:X8} ({0})", sizes.GPUSize);
+
+                                        xml.WriteStartElement("Primitive");
+
+                                        xml.WriteAttributeString("Name", primitive.Name);
+                                        xml.WriteAttributeString("Type", file.PrimitiveTypes[primitive.Data.Type]);
+                                        xml.WriteAttributeString("Allocator", file.AllocatorTypes.ContainsKey(primitive.Data.Allocator) ? file.AllocatorTypes[primitive.Data.Allocator] : primitive.Data.Allocator.ToString());
+                                        xml.WriteAttributeString("Flags", primitive.Data.Flags.ToString());
+                                        xml.WriteAttributeString("ExtensionIndex", primitive.Data.ExtensionIndex.ToString());
+                                        xml.WriteAttributeString("CPUSize", primitive.Data.CPUSize.ToString());
+                                        xml.WriteAttributeString("GPUSize", primitive.Data.GPUSize.ToString());
+                                        xml.WriteAttributeString("AllocationGroup", primitive.Data.AllocationGroup.ToString());
+
+                                        xml.WriteAttributeString("WriteTimeCPUSize", sizes.CPUSize.ToString());
+                                        xml.WriteAttributeString("WriteTimeGPUSize", sizes.GPUSize.ToString());
+
+                                        xml.WriteEndElement(); // Primitive
                                     }
-                                    sw.WriteLine();
+
+                                    xml.WriteEndElement(); // Container
                                 }
+
+                                xml.WriteEndElement(); // Containers
+
+                                xml.WriteEndElement(); // AssetAssembler
+                                xml.WriteEndDocument();
+                            }
+                        }
+                        break;
+                    }
+                case "toasm":
+                    {
+                        using (Stream stream = File.OpenRead(options.Source))
+                        {
+                            XDocument xml = XDocument.Load(stream);
+
+                            Stream2File file = new Stream2File();
+
+                            if (options.Output == null || options.Output == "")
+                            {
+                                options.Output = Path.ChangeExtension(options.Source, "asm_pc");
+                            }
+
+                            Dictionary<string, byte> allocatorTypesLookup = new Dictionary<string, byte>();
+                            Dictionary<string, byte> containerTypesLookup = new Dictionary<string, byte>();
+                            Dictionary<string, byte> primitiveTypesLookup = new Dictionary<string, byte>();
+
+                            foreach (var node in xml.Descendants("AllocatorType"))
+                            {
+                                byte id = byte.Parse(node.Attribute("ID").Value);
+                                string name = node.Attribute("Name").Value;
+                                allocatorTypesLookup.Add(name, id);
+                                file.AllocatorTypes.Add(id, name);
+                            }
+
+                            foreach (var node in xml.Descendants("ContainerType"))
+                            {
+                                byte id = byte.Parse(node.Attribute("ID").Value);
+                                string name = node.Attribute("Name").Value;
+                                containerTypesLookup.Add(name, id);
+                                file.ContainerTypes.Add(id, name);
+                            }
+
+                            foreach (var node in xml.Descendants("PrimitiveType"))
+                            {
+                                byte id = byte.Parse(node.Attribute("ID").Value);
+                                string name = node.Attribute("Name").Value;
+                                primitiveTypesLookup.Add(name, id);
+                                file.PrimitiveTypes.Add(id, name);
+                            }
+
+                            foreach (var cNode in xml.Descendants("Container"))
+                            {
+                                Container container = new Container();
+                                container.Name = cNode.Attribute("Name").Value;
+                                container.ContainerType = containerTypesLookup[cNode.Attribute("Type").Value];
+                                container.Flags = (ContainerFlags)ushort.Parse(cNode.Attribute("Flags").Value);
+                                container.PackfileBaseOffset = uint.Parse(cNode.Attribute("PackfileBaseOffset").Value);
+                                container.CompressionType = byte.Parse(cNode.Attribute("CompressionType").Value);
+                                container.StubContainerParentName = cNode.Attribute("StubContainerParentName").Value;
+                                container.TotalCompressedPackfileReadSize = int.Parse(cNode.Attribute("TotalCompressedPackfileReadSize").Value);
+                                var auxData = cNode.Element("AuxData");
+                                if (auxData != null)
+                                {
+                                    container.AuxData = Convert.FromBase64String(auxData.Value);
+                                }
+                                else
+                                {
+                                    container.AuxData = new byte[0];
+                                }
+                                
+                                foreach (var pNode in cNode.Descendants("Primitive"))
+                                {
+                                    Primitive p = new Primitive();
+                                    p.Name = pNode.Attribute("Name").Value;
+                                    p.Data = new PrimitiveData();
+                                    p.Data.Type = primitiveTypesLookup[pNode.Attribute("Type").Value];
+                                    byte allocatorType = 0;
+                                    if (byte.TryParse(pNode.Attribute("Allocator").Value, out allocatorType))
+                                    {
+                                        p.Data.Allocator = allocatorType;
+                                    }
+                                    else
+                                    {
+                                        p.Data.Allocator = allocatorTypesLookup[pNode.Attribute("Allocator").Value];
+                                    }
+                                    p.Data.Flags = byte.Parse(pNode.Attribute("Flags").Value);
+                                    p.Data.ExtensionIndex = byte.Parse(pNode.Attribute("ExtensionIndex").Value);
+                                    p.Data.CPUSize = uint.Parse(pNode.Attribute("CPUSize").Value);
+                                    p.Data.GPUSize = uint.Parse(pNode.Attribute("GPUSize").Value);
+                                    p.Data.AllocationGroup = byte.Parse(pNode.Attribute("AllocationGroup").Value);
+                                    container.Primitives.Add(p);
+
+                                    WriteTimeSizes size = new WriteTimeSizes();
+                                    size.CPUSize = uint.Parse(pNode.Attribute("WriteTimeCPUSize").Value);
+                                    size.GPUSize = uint.Parse(pNode.Attribute("WriteTimeGPUSize").Value);
+                                    container.PrimitiveSizes.Add(size);
+                                }
+
+                                container.PrimitiveCount = (ushort)container.Primitives.Count;
+                                file.Containers.Add(container);
+                            }
+
+                            using (Stream outputStream = File.Create(options.Output))
+                            {
+                                file.Save(outputStream);
                             }
                         }
                         break;

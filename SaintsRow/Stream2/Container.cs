@@ -20,6 +20,12 @@ namespace ThomasJepp.SaintsRow.Stream2
 
         public List<Primitive> Primitives { get; set; }
 
+        public Container()
+        {
+            Primitives = new List<Primitive>();
+            PrimitiveSizes = new List<WriteTimeSizes>();
+        }
+
         public Container(Stream stream)
         {
             UInt16 stringLength = stream.ReadUInt16();

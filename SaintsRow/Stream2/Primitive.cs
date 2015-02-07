@@ -9,6 +9,10 @@ namespace ThomasJepp.SaintsRow.Stream2
         public string Name { get; set; }
         public PrimitiveData Data;
 
+        public Primitive()
+        {
+        }
+
         public Primitive(Stream stream)
         {
             UInt16 stringLength = stream.ReadUInt16();

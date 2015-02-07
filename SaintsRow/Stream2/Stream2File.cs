@@ -6,8 +6,7 @@ namespace ThomasJepp.SaintsRow.Stream2
 {
     public class Stream2File
     {
-        public ContainerFileHeader Header { get; set; }
-
+        public ContainerFileHeader Header = new ContainerFileHeader();
         public Dictionary<byte, string> AllocatorTypes = new Dictionary<byte, string>();
         public Dictionary<byte, string> PrimitiveTypes = new Dictionary<byte, string>();
         public Dictionary<byte, string> ContainerTypes = new Dictionary<byte, string>();

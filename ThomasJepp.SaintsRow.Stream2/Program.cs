@@ -16,10 +16,10 @@ namespace ThomasJepp.SaintsRow.Stream2
         [CommandLineParameter(Name = "source", ParameterIndex = 1, Required = true, Description = "The Stream2 Container to process.")]
         public string Source { get; set; }
 
-        [CommandLineParameter(Name = "action", ParameterIndex = 2, Required = true, Description = "The action to perform. Valid actions are \"toasm\" \"toxml\", \"update\".")]
+        [CommandLineParameter(Name = "action", ParameterIndex = 2, Required = true, Description = "The action to perform. Valid actions are \"clean\", \"toasm\", \"toxml\" and \"update\".")]
         public string Action { get; set; }
 
-        [CommandLineParameter(Name = "output", ParameterIndex = 3, Required = false, Description = "If the action is \"toasm\" or \"toxml\", this is used as the output. If not specified, the new file will be placed in the same directory as the source file.")]
+        [CommandLineParameter(Name = "output", ParameterIndex = 3, Required = false, Description = "If the action is \"toasm\" or \"toxml\", this is used as the output. If not specified, the new file will be placed in the same directory as the source file. This is not used for \"update\".")]
         public string Output { get; set; }
     }
 
@@ -244,6 +244,10 @@ namespace ThomasJepp.SaintsRow.Stream2
                                 file.Containers.Add(container);
                             }
 
+                            file.Header.Signature = (uint)0xBEEFFEED;
+                            file.Header.Version = (ushort)0x000C;
+                            file.Header.NumContainers = (short)file.Containers.Count;
+
                             using (Stream outputStream = File.Create(options.Output))
                             {
                                 file.Save(outputStream);
@@ -279,6 +283,42 @@ namespace ThomasJepp.SaintsRow.Stream2
                                     Console.WriteLine("Could not find {0}.", str2File);
                                 }
                             }
+                        }
+
+                        using (Stream stream = File.Create(options.Source))
+                        {
+                            file.Save(stream);
+                        }
+                        break;
+                    }
+                case "clean":
+                    {
+                        Stream2File file = null;
+                        using (Stream stream = File.OpenRead(options.Source))
+                        {
+                            file = new Stream2File(stream);
+
+                            string folder = Path.GetDirectoryName(options.Source);
+
+                            List<string> foundContainerNames = new List<string>();
+                            List<Container> duplicates = new List<Container>();
+                            foreach (var container in file.Containers)
+                            {
+                                if (!foundContainerNames.Contains(container.Name))
+                                {
+                                    foundContainerNames.Add(container.Name);
+                                }
+                                else
+                                {
+                                    duplicates.Add(container);
+                                }
+                            }
+
+                            foreach (var container in duplicates)
+                            {
+                                file.Containers.Remove(container);
+                            }
+                            file.Header.NumContainers = (short)file.Containers.Count;
                         }
 
                         using (Stream stream = File.Create(options.Source))

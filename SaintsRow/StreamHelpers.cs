@@ -115,6 +115,12 @@ namespace ThomasJepp.SaintsRow
             byte[] data = BitConverter.GetBytes(value);
             stream.Write(data, 0, 4);
         }
+
+        public static void WriteUInt64(this Stream stream, UInt64 value)
+        {
+            byte[] data = BitConverter.GetBytes(value);
+            stream.Write(data, 0, 8);
+        }
         #endregion
 
         #region String helpers

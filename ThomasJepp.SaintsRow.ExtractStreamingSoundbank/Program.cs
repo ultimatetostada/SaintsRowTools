@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 
 using CmdLine;
+using ThomasJepp.SaintsRow.Localization;
 using ThomasJepp.SaintsRow.Soundbanks.Streaming;
 
 namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
@@ -23,8 +24,11 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
             [CommandLineParameter(Name = "output", ParameterIndex = 2, Required = false, Description = "The location to save the extracted data. If not specified, the packfile will be extracted to a new folder with the same name in the current directory.")]
             public string Output { get; set; }
 
-            [CommandLineParameter(Command = "convert", Default = true, Description = "Convert the audio into playble OGG files. Requires ww2ogg and revorb in the same directory.", Name = "Convert audio")]
+            [CommandLineParameter(Command = "convert", Default = true, Description = @"Convert the audio into playble OGG files. Requires ww2ogg and revorb in the same directory. Valid options are ""true"" and ""false"". Defaults to ""true"".", Name = "Convert audio")]
             public bool ConvertAudio { get; set; }
+
+            [CommandLineParameter(Command = "game", Default = "srgooh", Description = @"The game load the character list files from for decoding the subtitles. Valid options are ""srgooh"", ""sriv"", ""srtt"". Defaults to ""srgooh"".", Name = "Game")]
+            public string Game { get; set; }
         }
 
         static string ExeLocation
@@ -84,6 +88,15 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
                 }
             }
 
+            Game game = Game.SaintsRowTheThird;
+
+            switch (options.Game.ToLowerInvariant())
+            {
+                case "srtt": game = Game.SaintsRowTheThird; break;
+                case "sriv": game = Game.SaintsRowIV; break;
+                case "srgooh": game = Game.SaintsRowGatOutOfHell; break;
+            }
+
             using (Stream stream = File.OpenRead(options.Source))
             {
                 var bnk = new StreamingSoundbank(stream);
@@ -121,22 +134,6 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
 
                             writer.WriteAttributeString("id", entry.Info.FileId.ToString());
 
-                            if (entry.Info.MetadataLength != 0)
-                            {
-                                Console.Write("[{0}/{1}] Extracting metadata... ", currentFile, bnk.Files.Count);
-                                string metadataFilename = String.Format("{0}_{1:D5}.metadata", bnkName, currentFile);
-                                using (Stream outputStream = File.Create(Path.Combine(folderName, metadataFilename)))
-                                {
-                                    using (Stream inputStream = entry.GetMetadataStream())
-                                    {
-                                        inputStream.CopyTo(outputStream);
-                                    }
-                                    outputStream.Flush();
-                                }
-                                Console.WriteLine("done.");
-                                writer.WriteAttributeString("metadata", metadataFilename);
-                            }
-
                             Console.Write("[{0}/{1}] Extracting audio... ", currentFile, bnk.Files.Count);
                             string audioFilename = String.Format("{0}_{1:D5}.wem", bnkName, currentFile);
                             using (Stream outputStream = File.Create(Path.Combine(folderName, audioFilename)))
@@ -150,10 +147,56 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
                             Console.WriteLine("done.");
                             writer.WriteAttributeString("audio", audioFilename);
 
-                            writer.WriteEndElement();
+                            if (entry.Info.MetadataLength != 0)
+                            {
+                                Console.Write("[{0}/{1}] Extracting metadata... ", currentFile, bnk.Files.Count);
+                                AudioMetadata metadata = null;
+                                using (Stream metadataStream = entry.GetMetadataStream())
+                                {
+                                    writer.WriteStartElement("metadata");
+                                    metadata = new AudioMetadata(metadataStream, Utility.GetGamePath(game));
+
+                                    writer.WriteAttributeString("version", metadata.Header.Version.ToString());
+                                    writer.WriteAttributeString("personaid", metadata.Header.PersonaID.ToString());
+                                    writer.WriteAttributeString("voicelineid", metadata.Header.VoicelineID.ToString());
+                                    writer.WriteAttributeString("wavlengthms", metadata.Header.WavLengthMs.ToString());
+
+                                    if (metadata.LipsyncData != null && metadata.LipsyncData.Length > 0)
+                                    {
+                                        writer.WriteStartElement("lipsync");
+                                        writer.WriteString(Convert.ToBase64String(metadata.LipsyncData));
+                                        writer.WriteEndElement(); // lipsync
+                                    }
+
+                                    if (metadata.Header.SubtitleSize > 0)
+                                    {
+                                        writer.WriteStartElement("subtitles");
+                                        writer.WriteAttributeString("version", metadata.SubtitleHeader.Version.ToString());
+
+                                        foreach (var subtitle in metadata.Subtitles)
+                                        {
+                                            Language language = subtitle.Key;
+                                            string text = subtitle.Value;
+
+                                            writer.WriteStartElement("subtitle");
+                                            writer.WriteAttributeString("language", language.ToString());
+                                            writer.WriteString(text);
+                                            writer.WriteEndElement(); // subtitle
+                                        }
+                                        writer.WriteEndElement(); // subtitles
+                                    }
+
+                                    writer.WriteEndElement(); // metadata
+                                }
+
+
+                                Console.WriteLine("done.");
+                            }
+
+                            writer.WriteEndElement(); // file
                         }
 
-                        writer.WriteEndElement();
+                        writer.WriteEndElement(); // soundbank
                         writer.WriteEndDocument();
                     }
                 }

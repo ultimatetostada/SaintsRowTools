@@ -68,10 +68,14 @@
     <Compile Include="Saves\SaintsRowIVMod\SectionId.cs" />
     <Compile Include="Saves\SaintsRowIVMod\Sections\PlayerSection.cs" />
     <Compile Include="Saves\SaintsRowIVMod\Sections\Player\SavedPlayerData.cs" />
+    <Compile Include="Soundbanks\Streaming\AudioMetadata.cs" />
+    <Compile Include="Soundbanks\Streaming\AudioMetadataHeader.cs" />
+    <Compile Include="Soundbanks\Streaming\AudioMetadataSubtitleHeader.cs" />
     <Compile Include="Soundbanks\Streaming\SoundbankEntry.cs" />
     <Compile Include="Soundbanks\Streaming\SoundbankEntryInfo.cs" />
     <Compile Include="Soundbanks\Streaming\SoundbankHeader.cs" />
     <Compile Include="Soundbanks\Streaming\StreamingSoundbank.cs" />
+    <Compile Include="Localization\Language.cs" />
     <Compile Include="Soundbanks\Wwise\SectionId.cs" />
     <Compile Include="Soundbanks\Wwise\ISoundbankSection.cs" />
     <Compile Include="Soundbanks\Wwise\Sections\BKHDSection.cs" />
@@ -94,6 +98,7 @@
     <Compile Include="Stream2\Stream2File.cs" />
     <Compile Include="Stream2\WriteTimeSizes.cs" />
     <Compile Include="StreamHelpers.cs" />
+    <Compile Include="Localization\LanguageUtility.cs" />
     <Compile Include="Strings\StringBucket.cs" />
     <Compile Include="Strings\StringFile.cs" />
     <Compile Include="Strings\StringHeader.cs" />

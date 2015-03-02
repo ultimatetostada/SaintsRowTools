@@ -150,11 +150,10 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
                             if (entry.Info.MetadataLength != 0)
                             {
                                 Console.Write("[{0}/{1}] Extracting metadata... ", currentFile, bnk.Files.Count);
-                                AudioMetadata metadata = null;
                                 using (Stream metadataStream = entry.GetMetadataStream())
                                 {
                                     writer.WriteStartElement("metadata");
-                                    metadata = new AudioMetadata(metadataStream, Utility.GetGamePath(game));
+                                    AudioMetadata metadata = new AudioMetadata(metadataStream, Utility.GetGamePath(game));
 
                                     writer.WriteAttributeString("version", metadata.Header.Version.ToString());
                                     writer.WriteAttributeString("personaid", metadata.Header.PersonaID.ToString());

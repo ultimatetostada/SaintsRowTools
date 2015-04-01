@@ -10,6 +10,7 @@ Point 4 means that if you modify the ThomasJepp.SaintsRow library or the include
 
 To comply with point 5, if you have changed the source code of the ThomasJepp.SaintsRow library or any included applications as part of your release, you must also release the source code to those changes. This license continues to apply to those changes.
 
-It does *not* apply to third-party software that merely references or links to the ThomasJepp.SaintsRow library. For instance, if you create a program that uses an unmodified copy of ThomasJepp.SaintsRow.dll, you don't have to release the source code of that program. You do still have to comply with points 1, 2 and 3.
+Point 5 does *not* apply to third-party software that merely references or links to an unmodified version of the ThomasJepp.SaintsRow library.
+For instance: if you create a program that uses an unmodified version of ThomasJepp.SaintsRow.dll you don't have to release the source code of that program. You do still have to comply with points 1, 2 and 3.
 
-
+If you create a program that uses a *modified* version of ThomasJepp.SaintsRow.dll you don't have to release the source code of that program, but you DO have to release the source code to your modified version of ThomasJepp.SaintsRow.dll. You still have to comply with points 1, 2 and 3, and you must make it clear that the source code to ThomasJepp.SaintsRow.dll has been modified.

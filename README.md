@@ -36,6 +36,6 @@ The ThomasJepp.SaintsRow library supports the following formats:
  - **Saints Row IV Debug Print Hook:** a DLL file that provides simple output for Lua debug_print messages for Saints Row IV.
 
 ## Licenses
- - CmdLine is licensed under the Microsoft Public License as per https://www.nuget.org/packages/CmdLine. The license is included in the repository.
+ - CmdLine is licensed under the Microsoft Public License as per https://www.nuget.org/packages/CmdLine. The license is included in the repository. CmdLine is used by the command line programs included in this repository.
  - The Saints Row IV Debug Print Hook is based on the Saints Row: The Third Debug Print Hook. The original license for the Saints Row: The Third Debug Print hook is also included in the repository.
- - All other code is licensed under the license included in the repository as "license.txt".
+ - All other code is licensed under the license included in the repository as "license.txt". A plain english explaination of what you need to do to comply with this license is included in "license_notes.txt".

@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SaintsRow")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("ThomasJepp.SaintsRow")]
+[assembly: AssemblyDescription("A library providing support for Saints Row file formats. See https://github.com/tomjepp/ThomasJepp.SaintsRow and https://www.saintsrowmods.com/forum/threads/minimauls-saints-row-iv-and-gat-out-of-hell-tools.3188/ for more information.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SaintsRow")]
-[assembly: AssemblyCopyright("Copyright ©  2013")]
+[assembly: AssemblyCompany("Thomas Jepp")]
+[assembly: AssemblyProduct("ThomasJepp.SaintsRow")]
+[assembly: AssemblyCopyright("Copyright © Thomas Jepp 2013-2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

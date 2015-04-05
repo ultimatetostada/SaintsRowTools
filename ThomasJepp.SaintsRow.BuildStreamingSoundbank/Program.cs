@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Xml;
 
 using CmdLine;
+using ThomasJepp.SaintsRow.GameInstances;
+using ThomasJepp.SaintsRow.Localization;
 using ThomasJepp.SaintsRow.Soundbanks.Streaming;
 
 namespace ThomasJepp.SaintsRow.BuildStreamingSoundbank
@@ -54,6 +56,8 @@ namespace ThomasJepp.SaintsRow.BuildStreamingSoundbank
                 {
                     reader.ReadToFollowing("soundbank");
                     uint wwiseId = uint.Parse(reader.GetAttribute("wwiseId"));
+                    string gameName = reader.GetAttribute("game");
+                    IGameInstance instance = GameInstance.GetFromString(gameName);
 
                     StreamingSoundbank bank = new StreamingSoundbank();
                     bank.Header.WwiseBankId = wwiseId;
@@ -63,13 +67,44 @@ namespace ThomasJepp.SaintsRow.BuildStreamingSoundbank
                     while (reader.ReadToFollowing("file"))
                     {
                         uint fileId = uint.Parse(reader.GetAttribute("id"));
-                        string metadata = reader.GetAttribute("metadata");
                         string audio = reader.GetAttribute("audio");
-
-                        Stream metadataStream = null;
-                        if (metadata != null)
+                        MemoryStream metadataStream = null;
+                        if (reader.ReadToDescendant("metadata"))
                         {
-                            metadataStream = File.OpenRead(Path.Combine(xmlFolder, metadata));
+                            AudioMetadata metadata = new AudioMetadata(instance);
+
+                            using (XmlReader metadataReader = reader.ReadSubtree())
+                            {
+                                metadataReader.Read();
+                                uint metadataVersion = uint.Parse(metadataReader.GetAttribute("version"));
+                                uint personaId = uint.Parse(metadataReader.GetAttribute("personaid"));
+                                uint voicelineId = uint.Parse(metadataReader.GetAttribute("voicelineid"));
+                                uint wavLengthMs = uint.Parse(metadataReader.GetAttribute("wavlengthms"));
+                                metadata.Header.Version = metadataVersion;
+                                metadata.Header.PersonaID = personaId;
+                                metadata.Header.VoicelineID = voicelineId;
+                                metadata.Header.WavLengthMs = wavLengthMs;
+
+                                if (metadataReader.ReadToFollowing("subtitles"))
+                                {
+                                    while (metadataReader.ReadToFollowing("subtitle"))
+                                    {
+                                        string languageString = metadataReader.GetAttribute("language");
+                                        metadataReader.Read();
+                                        string text = metadataReader.ReadContentAsString();
+                                        Language language = LanguageUtility.GetLanguageFromCode(languageString);
+                                        metadata.Subtitles.Add(language, text);
+                                    }
+                                }
+
+                                if (metadataReader.ReadToFollowing("lipsync"))
+                                {
+                                    string lipsyncBase64 = metadataReader.ReadContentAsString();
+                                    metadata.LipsyncData = Convert.FromBase64String(lipsyncBase64);
+                                }
+                            }
+                            metadataStream = new MemoryStream();
+                            metadata.Save(metadataStream);
                         }
 
                         Stream audioStream = File.OpenRead(Path.Combine(xmlFolder, audio));

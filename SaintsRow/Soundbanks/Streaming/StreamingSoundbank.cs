@@ -59,13 +59,7 @@ namespace ThomasJepp.SaintsRow.Soundbanks.Streaming
 
         public void AddFile(uint id, Stream audioStream)
         {
-            SoundbankEntry entry = new SoundbankEntry(this);
-            entry.Info.FileId = id;
-            entry.Info.MetadataLength = 0;
-            entry.Info.AudioLength = (uint)audioStream.Length;
-            m_AudioStreams.Add(audioStream);
-            m_MetadataStreams.Add(null);
-            Files.Add(entry);
+            AddFile(id, audioStream, null);
         }
 
         public void AddFile(uint id, Stream audioStream, Stream metadataStream)
@@ -106,6 +100,7 @@ namespace ThomasJepp.SaintsRow.Soundbanks.Streaming
                 Stream metadataStream = m_MetadataStreams[count];
                 if (metadataStream != null)
                 {
+                    metadataStream.Seek(0, SeekOrigin.Begin);
                     metadataStream.CopyTo(bnkStream);
                 }
                 Stream audioStream = m_AudioStreams[count];

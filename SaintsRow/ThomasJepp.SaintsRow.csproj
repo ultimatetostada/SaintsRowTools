@@ -100,6 +100,7 @@
     <Compile Include="Soundbanks\Wwise\Sections\HIRC\IHIRCObject.cs" />
     <Compile Include="Soundbanks\Wwise\Sections\HIRC\SoundFXObject.cs" />
     <Compile Include="Soundbanks\Wwise\WwiseSoundbank.cs" />
+    <Compile Include="Steam\KeyValues.cs" />
     <Compile Include="Stream2\ContainerFlags.cs" />
     <Compile Include="Stream2\Container.cs" />
     <Compile Include="Stream2\ContainerFileHeader.cs" />

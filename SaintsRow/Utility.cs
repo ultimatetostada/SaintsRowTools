@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 
+using ThomasJepp.SaintsRow.Steam;
+
 namespace ThomasJepp.SaintsRow
 {
     public static class Utility
@@ -15,49 +17,65 @@ namespace ThomasJepp.SaintsRow
         {
             int id = (int)gameId;
 
-            var keys = new string[]
-            {
-                @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {0}",
-                @"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {0}",
-            };
-
-            foreach (var key in keys)
-            {
-                var path = GetRegistryEntry(string.Format(key, id), "InstallLocation");
-                if (path != null && Directory.Exists(path))
-                {
-                    return path;
-                }
-            }
-
             string steamPath = GetRegistryEntry(@"HKEY_LOCAL_MACHINE\SOFTWARE\Valve\Steam", "InstallPath");
             if (steamPath == null)
                 steamPath = GetRegistryEntry(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Valve\Steam", "InstallPath");
 
             if (steamPath != null)
             {
-                string gamePath = null;
-
-                switch (gameId)
+                string appManifestFile = Path.Combine(steamPath, "SteamApps", String.Format("appmanifest_{0}.acf", id));
+                if (File.Exists(appManifestFile))
                 {
-                    case GameSteamID.SaintsRow2:
-                        gamePath = Path.Combine(steamPath, "steamapps", "common", "saints row 2");
-                        break;
-                    case GameSteamID.SaintsRowTheThird:
-                        gamePath = Path.Combine(steamPath, "steamapps", "common", "saints row the third");
-                        break;
-                    case GameSteamID.SaintsRowIV:
-                        gamePath = Path.Combine(steamPath, "steamapps", "common", "Saints Row IV");
-                        break;
-                    case GameSteamID.SaintsRowGatOutOfHell:
-                        gamePath = Path.Combine(steamPath, "steamapps", "common", "Project Gat");
-                        break;
+                    KeyValues manifestKv;
+                    using (Stream s = File.OpenRead(appManifestFile))
+                    {
+                        manifestKv = new KeyValues(s);
+                    }
+
+                    Dictionary<string, object> appState = (Dictionary<string, object>)manifestKv.Items["AppState"];
+                    string installdir = (string)appState["installdir"];
+                    string path = Path.Combine(steamPath, "SteamApps", "common", installdir);
+                    if (Directory.Exists(path))
+                        return path;
                 }
-                
-
-                if (Directory.Exists(gamePath))
+                else
                 {
-                    return gamePath;
+                    string libraryFoldersFile = Path.Combine(steamPath, "SteamApps", String.Format("libraryfolders.vdf"));
+                    if (File.Exists(libraryFoldersFile))
+                    {
+                        KeyValues kv;
+                        using (Stream s = File.OpenRead(libraryFoldersFile))
+                        {
+                            kv = new KeyValues(s);
+                        }
+
+                        Dictionary<string, object> libraryFolders = (Dictionary<string, object>)kv.Items["LibraryFolders"];
+                        int folderId = 0;
+                        while (true)
+                        {
+                            folderId++;
+                            if (!libraryFolders.ContainsKey(folderId.ToString()))
+                                break;
+
+                            string extraLibrary = (string)libraryFolders[folderId.ToString()];
+
+                            appManifestFile = Path.Combine(extraLibrary, "steamapps", String.Format("appmanifest_{0}.acf", id));
+                            if (File.Exists(appManifestFile))
+                            {
+                                KeyValues manifestKv;
+                                using (Stream s = File.OpenRead(appManifestFile))
+                                {
+                                    manifestKv = new KeyValues(s);
+                                }
+
+                                Dictionary<string, object> appState = (Dictionary<string, object>)manifestKv.Items["AppState"];
+                                string installdir = (string)appState["installdir"];
+                                string path = Path.Combine(extraLibrary, "steamapps", "common", installdir);
+                                if (Directory.Exists(path))
+                                    return path;
+                            }
+                        }
+                    }
                 }
             }
 

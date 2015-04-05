@@ -124,6 +124,16 @@ namespace ThomasJepp.SaintsRow
         #endregion
 
         #region String helpers
+        public static char ReadChar8(this Stream stream)
+        {
+            return (char)stream.ReadByte();
+        }
+
+        public static char ReadChar16(this Stream stream)
+        {
+            return (char)stream.ReadUInt16();
+        }
+
         public static string ReadAsciiNullTerminatedString(this Stream stream)
         {
             StringBuilder sb = new StringBuilder();
@@ -191,6 +201,18 @@ namespace ThomasJepp.SaintsRow
             }
 
             throw new NotImplementedException();
+        }
+        #endregion
+
+        #region StreamReader helpers
+        public static char ReadChar(this StreamReader sr)
+        {
+            return (char)sr.Read();
+        }
+
+        public static char PeekChar(this StreamReader sr)
+        {
+            return (char)sr.Peek();
         }
         #endregion
     }

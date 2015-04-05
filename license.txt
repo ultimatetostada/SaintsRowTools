@@ -1,4 +1,4 @@
-Saints Row IV and Gat Out Of Hell tools
+ThomasJepp.SaintsRow - Saints Row IV and Gat Out Of Hell tools
 Copyright (c) 2015, Thomas Jepp
 All rights reserved.
 

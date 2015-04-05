@@ -7,6 +7,8 @@ using System.Xml;
 using System.Xml.Linq;
 
 using CmdLine;
+using ThomasJepp.SaintsRow.GameInstances;
+using ThomasJepp.SaintsRow.Localization;
 using ThomasJepp.SaintsRow.Strings;
 
 namespace ThomasJepp.SaintsRow.BuildStrings
@@ -47,9 +49,23 @@ namespace ThomasJepp.SaintsRow.BuildStrings
 
             Console.WriteLine("Packing {0} and creating {1}...", options.Input, outputFile);
 
-            
+            XDocument xml = null;
 
-            UInt16 bucketCount = (UInt16)(lines.Length / 5); // work this out properly
+            using (Stream s = File.OpenRead(options.Input))
+            {
+                xml = XDocument.Load(s);
+            }
+
+            var stringsNode = xml.Descendants("Strings").First();
+            string languageString = stringsNode.Attribute("Language").Value;
+            string gameString = stringsNode.Attribute("Game").Value;
+
+            Language language = LanguageUtility.GetLanguageFromCode(languageString);
+            IGameInstance instance = GameInstance.GetFromString(gameString);
+
+            var stringNodes = stringsNode.Descendants("String");
+
+            UInt16 bucketCount = (UInt16)(stringNodes.Count() / 5);
             if (bucketCount < 32)
                 bucketCount = 32;
             else if (bucketCount < 64)
@@ -63,23 +79,29 @@ namespace ThomasJepp.SaintsRow.BuildStrings
             else 
                 bucketCount = 1024;
 
-            StringFile stringFile = new StringFile(bucketCount, options.SaintsRow2Mode);
+            StringFile stringFile = new StringFile(bucketCount, language, instance);
 
-            foreach (string line in lines)
+            foreach (var stringNode in stringNodes)
             {
-                string[] pieces = line.Split(new char[] { ':' }, 2);
-                string key = pieces[0];
-                UInt32 hash = 0;
-                string value = pieces[1].Trim(' ', '"').Replace("\\n", "\n");
-                if (key.StartsWith("\"") && key.EndsWith("\""))
-                    hash = Hashes.CrcVolition(key.Trim('"'));
+                uint hash;
+
+                var nameAttribute = stringNode.Attribute("Name");
+                if (nameAttribute != null)
+                {
+                    hash = Hashes.CrcVolition(nameAttribute.Value);
+                }
                 else
-                    hash = UInt32.Parse(key);
+                {
+                    hash = uint.Parse(stringNode.Attribute("Hash").Value);
+                }
+
+
+                string value = stringNode.Value;
 
                 if (stringFile.ContainsKey(hash))
                 {
                     Console.WriteLine("You are attempting to add a duplicate key to the strings file.");
-                    Console.WriteLine("Key: \"{0}\", Hash: {1}, Value: {2}", key, hash, value);
+                    Console.WriteLine("Name: \"{0}\", Hash: {1}, Value: {2}", nameAttribute != null ? nameAttribute.Value : "", hash, value);
                     Console.WriteLine("Other value: {0}", stringFile.GetString(hash));
                     return;
                 }

@@ -50,7 +50,14 @@ namespace ThomasJepp.SaintsRow.Localization
                 case "SK": return Language.Korean;
                 case "RU": return Language.Russian;
                 case "CH": return Language.Chinese;
-                default: throw new NotImplementedException();
+                default:
+                    {
+                        Language lang;
+                        if (Enum.TryParse<Language>(code, out lang))
+                            return lang;
+                        else
+                            throw new NotImplementedException();
+                    }
             }
         }
 

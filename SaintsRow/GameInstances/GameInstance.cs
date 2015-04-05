@@ -33,18 +33,22 @@ namespace ThomasJepp.SaintsRow.GameInstances
             switch (game.ToLowerInvariant())
             {
                 case "sr2":
+                case "saintsrow2":
                     return new SR2Instance();
                     
                 case "sr3":
                 case "srtt":
+                case "saintsrowthethird":
                     return new SRTTInstance();
 
                 case "sr4":
                 case "sriv":
+                case "saintsrowiv":
                     return new SRIVInstance();
 
                 case "gooh":
                 case "srgooh":
+                case "saintsrowgatoutofhell":
                     return new SRGOOHInstance();
 
                 default:

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Xml;
+using System.Xml.Linq;
 
 using CmdLine;
 using ThomasJepp.SaintsRow.Strings;
@@ -13,9 +16,6 @@ namespace ThomasJepp.SaintsRow.BuildStrings
         [CommandLineArguments(Program = "ThomasJepp.SaintsRow.BuildStrings", Title = "Saints Row Localisation File Builder", Description = "Builds Saints Row PC Localisation files. Supports Saints Row 2, Saints Row: The Third and Saints Row IV.")]
         internal class Options
         {
-            [CommandLineParameter(Command = "sr2", Default = false, Description = "Build files suitable for Saints Row 2. If not specified, files suitable for Saints Row: The Third and Saints Row IV will be built.", Name = "Saints Row 2 Mode")]
-            public bool SaintsRow2Mode { get; set; }
-
             [CommandLineParameter(Name = "input", ParameterIndex = 1, Required = true, Description = "The file containing the language strings to use.")]
             public string Input { get; set; }
 
@@ -47,7 +47,7 @@ namespace ThomasJepp.SaintsRow.BuildStrings
 
             Console.WriteLine("Packing {0} and creating {1}...", options.Input, outputFile);
 
-            string[] lines = File.ReadAllLines(options.Input);
+            
 
             UInt16 bucketCount = (UInt16)(lines.Length / 5); // work this out properly
             if (bucketCount < 32)

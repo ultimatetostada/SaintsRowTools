@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using ThomasJepp.SaintsRow.GameInstances;
+using ThomasJepp.SaintsRow.Localization;
 
 namespace ThomasJepp.SaintsRow.Strings
 {
@@ -65,8 +67,10 @@ namespace ThomasJepp.SaintsRow.Strings
 
         public bool FileIsSaintsRow2
         {
-            get;
-            set;
+            get
+            {
+                return GameInstance.Game == GameSteamID.SaintsRow2;
+            }
         }
 
         public UInt32 ID
@@ -93,14 +97,13 @@ namespace ThomasJepp.SaintsRow.Strings
             }
         }
 
-        public StringFile(UInt16 bucketCount)
-            : this(bucketCount, false)
-        {
-        }
+        public Language Language { get; set; }
+        public IGameInstance GameInstance { get; set; }
 
-        public StringFile(UInt16 bucketCount, bool sr2)
+        public StringFile(UInt16 bucketCount, Language language, IGameInstance instance)
         {
-            FileIsSaintsRow2 = sr2;
+            GameInstance = instance;
+            Language = language;
             Header = new StringHeader();
             Header.BucketCount = bucketCount;
             Header.ID = 0xA84C7F73;
@@ -111,15 +114,15 @@ namespace ThomasJepp.SaintsRow.Strings
             }
         }
 
-        public StringFile(Stream stream)
-            : this(stream, false)
+        public StringFile(Stream stream, Language language, IGameInstance instance)
         {
-        }
-
-        public StringFile(Stream stream, bool sr2)
-        {
-            FileIsSaintsRow2 = sr2;
+            GameInstance = instance;
+            Language = language;
             Header = stream.ReadStruct<StringHeader>();
+
+            var map = LanguageUtility.GetDecodeCharMap(GameInstance, Language);
+
+            StringBuilder sb = new StringBuilder();
 
             for (int i = 0; i < Header.BucketCount; i++)
             {
@@ -138,21 +141,32 @@ namespace ThomasJepp.SaintsRow.Strings
                     if (FileIsSaintsRow2)
                         stringHash = stringHash.Swap();
 
+                    sb.Clear();
+                    
                     int length = 0;
                     while (true)
                     {
                         UInt16 charValue = stream.ReadUInt16();
+
                         if (charValue == 0x0000)
                             break;
+
+                        if (FileIsSaintsRow2)
+                            charValue = charValue.Swap();
+
+                        char src = (char)charValue;
+
+                        char value = src;
+
+                        if (map.ContainsKey(src))
+                            value = map[src];
+
+                        sb.Append(value);
+
                         length++;
                     }
 
-                    stream.Seek(stringOffset+4, SeekOrigin.Begin);
-                    byte[] buffer = new byte[length*2];
-                    stream.Read(buffer, 0, buffer.Length);
-
-                    string text = FileIsSaintsRow2 ? Encoding.BigEndianUnicode.GetString(buffer) : Encoding.Unicode.GetString(buffer);
-
+                    string text = sb.ToString();
                     bucketData.Add(stringHash, text);
                 }
                 Buckets.Add(bucketData);
@@ -161,6 +175,8 @@ namespace ThomasJepp.SaintsRow.Strings
 
         public void Save(Stream stream)
         {
+            var map = LanguageUtility.GetEncodeCharMap(GameInstance, Language);
+
             int total = 0;
             foreach (var bucket in Buckets)
             {
@@ -187,10 +203,26 @@ namespace ThomasJepp.SaintsRow.Strings
                     UInt32 hash = FileIsSaintsRow2 ? pair.Key.Swap() : pair.Key;
                     stream.WriteUInt32(hash);
 
-                    byte[] text = FileIsSaintsRow2 ? Encoding.BigEndianUnicode.GetBytes(pair.Value) : Encoding.Unicode.GetBytes(pair.Value);
-                    stream.Write(text, 0, text.Length);
-                    stream.WriteByte(0);
-                    stream.WriteByte(0);
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        for (int i = 0; i < pair.Value.Length; i++)
+                        {
+                            char src = pair.Value[i];
+                            char value = src;
+                            if (map.ContainsKey(src))
+                                value = map[src];
+
+                            UInt16 charValue = (UInt16)value;
+                            if (FileIsSaintsRow2)
+                                charValue = charValue.Swap();
+
+                            ms.WriteUInt16(charValue);
+                        }
+                        ms.WriteInt16(0);
+                        ms.Seek(0, SeekOrigin.Begin);
+                        ms.CopyTo(stream);
+                    }
+
                     nextStringPos = (int)stream.Position;
                 }
 

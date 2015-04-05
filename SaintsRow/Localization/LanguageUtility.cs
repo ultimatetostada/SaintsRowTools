@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-using ThomasJepp.SaintsRow.Packfiles;
+using ThomasJepp.SaintsRow.GameInstances;
 
 namespace ThomasJepp.SaintsRow.Localization
 {
@@ -28,45 +28,70 @@ namespace ThomasJepp.SaintsRow.Localization
                 case Language.Korean: return "SK";
                 case Language.Russian: return "RU";
                 case Language.Chinese: return "CH";
+                default: throw new NotImplementedException();
             }
-
-            return "";
         }
 
-        public static Dictionary<char, char> GetCharMap(string gameDir, Language language)
+        public static Language GetLanguageFromCode(string code)
         {
-            string filename = String.Format("charlist_{0}.dat", GetLanguageCode(language).ToLowerInvariant());
+            switch (code.ToUpperInvariant())
+            {
+                case "US": return Language.English;
+                case "ES": return Language.Spanish;
+                case "IT": return Language.Italian;
+                case "JP": return Language.Japanese;
+                case "DE": return Language.German;
+                case "FR": return Language.French;
+                case "NL": return Language.Dutch;
+                case "SE": return Language.Swedish;
+                case "DK": return Language.Danish;
+                case "CZ": return Language.Czech;
+                case "PL": return Language.Polish;
+                case "SK": return Language.Korean;
+                case "RU": return Language.Russian;
+                case "CH": return Language.Chinese;
+                default: throw new NotImplementedException();
+            }
+        }
 
-            string miscvpp = Path.Combine(gameDir, "packfiles", "pc", "cache", "misc.vpp_pc");
+        public static Dictionary<char, char> GetDecodeCharMap(IGameInstance instance, Language language)
+        {
+            string filename = null;
+            string packfile = null;
+            if (instance.Game == GameSteamID.SaintsRow2)
+            {
+                filename = String.Format("charlist_{0}.txt", GetLanguageCode(language).ToLowerInvariant());
+                packfile = "patch.vpp_pc";
+            }
+            else
+            {
+                filename = String.Format("charlist_{0}.dat", GetLanguageCode(language).ToLowerInvariant());
+                packfile = "misc.vpp_pc";
+            }
 
+            using (Stream stream = instance.OpenPackfileFile(filename, packfile))
+            {
+                return GetDecodeCharMapInternal(stream, language);
+            }
+        }
+
+        private static Dictionary<char, char> GetDecodeCharMapInternal(Stream charmapStream, Language language)
+        {
             List<string> lines = new List<string>();
 
-            using (Stream packfileStream = File.OpenRead(miscvpp))
+            using (StreamReader sr = new StreamReader(charmapStream))
             {
-                using (IPackfile packfile = Packfile.FromStream(packfileStream, false))
+                while (!sr.EndOfStream)
                 {
-                    foreach (var file in packfile.Files)
-                    {
-                        if (file.Name == filename)
-                        {
-                            using (Stream stream = file.GetStream())
-                            {
-                                StreamReader sr = new StreamReader(stream);
-                                while (!sr.EndOfStream)
-                                {
-                                    string line = sr.ReadLine();
+                    string line = sr.ReadLine();
 
-                                    if (line.StartsWith("//"))
-                                        continue;
+                    if (line.StartsWith("//"))
+                        continue;
 
-                                    if (line.StartsWith("count="))
-                                        continue;
+                    if (line.StartsWith("count="))
+                        continue;
 
-                                    lines.Add(line);
-                                }
-                            }
-                        }
-                    }
+                    lines.Add(line);
                 }
             }
 
@@ -81,6 +106,70 @@ namespace ThomasJepp.SaintsRow.Localization
                     if (value > 0x100)
                     {
                         map.Add((char)nextSlot, (char)value);
+                        nextSlot++;
+                    }
+                    else
+                    {
+                        map.Add((char)value, (char)value);
+                    }
+                }
+            }
+
+            return map;
+        }
+
+        public static Dictionary<char, char> GetEncodeCharMap(IGameInstance instance, Language language)
+        {
+            string filename = null;
+            string packfile = null;
+            if (instance.Game == GameSteamID.SaintsRow2)
+            {
+                filename = String.Format("charlist_{0}.txt", GetLanguageCode(language).ToLowerInvariant());
+                packfile = "patch.vpp_pc";
+            }
+            else
+            {
+                filename = String.Format("charlist_{0}.dat", GetLanguageCode(language).ToLowerInvariant());
+                packfile = "misc.vpp_pc";
+            }
+
+            using (Stream stream = instance.OpenPackfileFile(filename, packfile))
+            {
+                return GetEncodeCharMapInternal(stream, language);
+            }
+        }
+
+        private static Dictionary<char, char> GetEncodeCharMapInternal(Stream charmapStream, Language language)
+        {
+            List<string> lines = new List<string>();
+
+            using (StreamReader sr = new StreamReader(charmapStream))
+            {
+                while (!sr.EndOfStream)
+                {
+                    string line = sr.ReadLine();
+
+                    if (line.StartsWith("//"))
+                        continue;
+
+                    if (line.StartsWith("count="))
+                        continue;
+
+                    lines.Add(line);
+                }
+            }
+
+            Dictionary<char, char> map = new Dictionary<char, char>();
+
+            int nextSlot = 0x100;
+            foreach (string line in lines)
+            {
+                int value = 0;
+                if (int.TryParse(line, out value))
+                {
+                    if (value > 0x100)
+                    {
+                        map.Add((char)value, (char)nextSlot);
                         nextSlot++;
                     }
                     else

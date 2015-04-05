@@ -11,7 +11,7 @@ namespace ThomasJepp.SaintsRow
             return (string)Microsoft.Win32.Registry.GetValue(key, value, null);
         }
 
-        public static string GetGamePath(Game gameId)
+        public static string GetGamePath(GameSteamID gameId)
         {
             int id = (int)gameId;
 
@@ -40,16 +40,16 @@ namespace ThomasJepp.SaintsRow
 
                 switch (gameId)
                 {
-                    case Game.SaintsRow2:
+                    case GameSteamID.SaintsRow2:
                         gamePath = Path.Combine(steamPath, "steamapps", "common", "saints row 2");
                         break;
-                    case Game.SaintsRowTheThird:
+                    case GameSteamID.SaintsRowTheThird:
                         gamePath = Path.Combine(steamPath, "steamapps", "common", "saints row the third");
                         break;
-                    case Game.SaintsRowIV:
+                    case GameSteamID.SaintsRowIV:
                         gamePath = Path.Combine(steamPath, "steamapps", "common", "Saints Row IV");
                         break;
-                    case Game.SaintsRowGatOutOfHell:
+                    case GameSteamID.SaintsRowGatOutOfHell:
                         gamePath = Path.Combine(steamPath, "steamapps", "common", "Project Gat");
                         break;
                 }

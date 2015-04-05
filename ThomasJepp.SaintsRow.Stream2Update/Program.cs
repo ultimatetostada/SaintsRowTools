@@ -39,8 +39,8 @@ namespace ThomasJepp.SaintsRow.Stream2Update
 
             if (options.Source == null)
             {
-                string sriv = ThomasJepp.SaintsRow.Utility.GetGamePath(Game.SaintsRowIV);
-                string srgooh = ThomasJepp.SaintsRow.Utility.GetGamePath(Game.SaintsRowGatOutOfHell);
+                string sriv = ThomasJepp.SaintsRow.Utility.GetGamePath(GameSteamID.SaintsRowIV);
+                string srgooh = ThomasJepp.SaintsRow.Utility.GetGamePath(GameSteamID.SaintsRowGatOutOfHell);
 
                 int gameCount = 0, srivNum = 0, srgoohNum = 0;
                 Console.WriteLine("Detected the following games:");

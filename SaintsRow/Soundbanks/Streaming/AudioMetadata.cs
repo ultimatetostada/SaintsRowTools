@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
+using ThomasJepp.SaintsRow.GameInstances;
 using ThomasJepp.SaintsRow.Localization;
 
 namespace ThomasJepp.SaintsRow.Soundbanks.Streaming
@@ -15,7 +16,7 @@ namespace ThomasJepp.SaintsRow.Soundbanks.Streaming
         public byte[] LipsyncData = null;
         public Dictionary<Language, string> Subtitles = new Dictionary<Language,string>();
 
-        public AudioMetadata(Stream stream, string gameDir)
+        public AudioMetadata(Stream stream, IGameInstance instance)
         {
             Header = stream.ReadStruct<AudioMetadataHeader>();
             
@@ -50,7 +51,7 @@ namespace ThomasJepp.SaintsRow.Soundbanks.Streaming
                     byte[] subtitleData = new byte[localizedVoiceSubtitleHeader.Length];
                     stream.Read(subtitleData, 0, (int)localizedVoiceSubtitleHeader.Length);
 
-                    var map = LanguageUtility.GetCharMap(gameDir, language);
+                    var map = LanguageUtility.GetDecodeCharMap(instance, language);
 
                     StringBuilder subtitleBuilder = new StringBuilder();
                     for (int pos = 0; pos < subtitleData.Length; pos+=2)

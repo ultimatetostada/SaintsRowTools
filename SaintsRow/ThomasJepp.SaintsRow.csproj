@@ -44,7 +44,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ByteHelpers.cs" />
-    <Compile Include="Game.cs" />
+    <Compile Include="GameInstances\FileSearchResult.cs" />
+    <Compile Include="GameSteamID.cs" />
+    <Compile Include="GameInstances\GameInstance.cs" />
+    <Compile Include="GameInstances\SR2Instance.cs" />
+    <Compile Include="GameInstances\SRTTInstance.cs" />
+    <Compile Include="GameInstances\SRGOOHInstance.cs" />
+    <Compile Include="GameInstances\SRIVInstance.cs" />
+    <Compile Include="GameInstances\IGameInstance.cs" />
     <Compile Include="Hashes.cs" />
     <Compile Include="NumberHelpers.cs" />
     <Compile Include="Packfiles\IPackfile.cs" />

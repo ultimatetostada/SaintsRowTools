@@ -88,13 +88,13 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
                 }
             }
 
-            Game game = Game.SaintsRowTheThird;
+            GameSteamID game = GameSteamID.SaintsRowTheThird;
 
             switch (options.Game.ToLowerInvariant())
             {
-                case "srtt": game = Game.SaintsRowTheThird; break;
-                case "sriv": game = Game.SaintsRowIV; break;
-                case "srgooh": game = Game.SaintsRowGatOutOfHell; break;
+                case "srtt": game = GameSteamID.SaintsRowTheThird; break;
+                case "sriv": game = GameSteamID.SaintsRowIV; break;
+                case "srgooh": game = GameSteamID.SaintsRowGatOutOfHell; break;
             }
 
             using (Stream stream = File.OpenRead(options.Source))

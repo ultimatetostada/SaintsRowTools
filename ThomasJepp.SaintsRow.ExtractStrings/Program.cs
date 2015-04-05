@@ -3,27 +3,27 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 using CmdLine;
+using ThomasJepp.SaintsRow.GameInstances;
+using ThomasJepp.SaintsRow.Localization;
 using ThomasJepp.SaintsRow.Strings;
 
 namespace ThomasJepp.SaintsRow.ExtractStrings
 {
     public static class Program
     {
-        [CommandLineArguments(Program = "ThomasJepp.SaintsRow.ExtractStrings", Title = "Saints Row Localisation File Extractor", Description = "Extracts Saints Row PC Localisation files. Supports Saints Row 2, Saints Row: The Third and Saints Row IV.")]
+        [CommandLineArguments(Program = "ThomasJepp.SaintsRow.ExtractStrings", Title = "Saints Row Localisation File Extractor", Description = "Extracts Saints Row PC Localisation files. Supports Saints Row 2, Saints Row: The Third, Saints Row IV and Saints Row: Gat out of Hell.")]
         internal class Options
         {
-            [CommandLineParameter(Command = "sr2", Default = false, Description = "Extract a Saints Row 2 file. If not specified, the format used in Saints Row: The Third and Saints Row IV is assumed.", Name = "Saints Row 2 Mode")]
-            public bool SaintsRow2Mode { get; set; }
+            [CommandLineParameter(Name = "game", ParameterIndex = 1, Required = true, Description = "The game you wish to build a packfile for. Valid options are \"sr2\", \"srtt\", \"sriv\" and \"srgooh\".")]
+            public string Game { get; set; }
 
-            [CommandLineParameter(Command = "xtbl", Description = "The path of a folder containing the XTBL files from the game matching the specified input file. This is used to provide more understandable output with the correct language string names. If not specified language strings will be identified by their hash.", Name = "Location of XTBL files.", ValueExample=@"path")]
-            public string XtblPath { get; set; }
-
-            [CommandLineParameter(Name = "input", ParameterIndex = 1, Required = true, Description = "The localisation file to extract.")]
+            [CommandLineParameter(Name = "input", ParameterIndex = 2, Required = true, Description = "The localisation file to extract.")]
             public string Input { get; set; }
 
-            [CommandLineParameter(Name = "output", ParameterIndex = 2, Required = false, Description = "The output file to create. If not specified, the input filename will be used with the exension changed to \".txt\".")]
+            [CommandLineParameter(Name = "output", ParameterIndex = 3, Required = false, Description = "The output file to create. If not specified, the input filename will be used with the exension changed to \".xml\".")]
             public string Output { get; set; }
         }
 
@@ -47,27 +47,32 @@ namespace ThomasJepp.SaintsRow.ExtractStrings
                 return;
             }
 
+            IGameInstance instance = GameInstance.GetFromString(options.Game);
+
+            string filename = Path.GetFileNameWithoutExtension(options.Input);
+            string languageCode = filename.Remove(0, filename.Length - 2);
+            Language language = LanguageUtility.GetLanguageFromCode(languageCode);
+
+            Console.WriteLine("Loading XTBL files...");
             Dictionary<UInt32, string> hashLookup = new Dictionary<UInt32, string>();
-            if (options.XtblPath != null)
+            var results = instance.SearchForFiles("*.xtbl");
+            foreach (var pair in results)
             {
-                Console.WriteLine("Loading XTBL files...");
-                string[] xtblFiles = Directory.GetFiles(options.XtblPath, "*.xtbl");
-                foreach (string xtblFile in xtblFiles)
+                string xtbl = null;
+                using (StreamReader reader = new StreamReader(pair.Value.GetStream()))
                 {
-                    StreamReader reader = new StreamReader(xtblFile);
-                    string xtbl = reader.ReadToEnd();
-                    reader.Close();
-                    Regex regex = new Regex("<Name>(.*?)</Name>", RegexOptions.Compiled);
-                    foreach (Match m in regex.Matches(xtbl))
-                    {
-                        uint hash = Hashes.CrcVolition(m.Groups[1].Value);
-                        if (!hashLookup.ContainsKey(hash))
-                            hashLookup.Add(hash, m.Groups[1].Value);
-                    }
+                    xtbl = reader.ReadToEnd();
+                }
+                Regex regex = new Regex("<Name>(.*?)</Name>", RegexOptions.Compiled);
+                foreach (Match m in regex.Matches(xtbl))
+                {
+                    uint hash = Hashes.CrcVolition(m.Groups[1].Value);
+                    if (!hashLookup.ContainsKey(hash))
+                        hashLookup.Add(hash, m.Groups[1].Value);
                 }
             }
 
-            string outputFile = (options.Output != null) ? options.Output : Path.ChangeExtension(options.Input, ".txt");
+            string outputFile = (options.Output != null) ? options.Output : Path.ChangeExtension(options.Input, ".xml");
 
             Console.WriteLine("Extracting {0} to {1}...", options.Input, outputFile);
 
@@ -75,35 +80,59 @@ namespace ThomasJepp.SaintsRow.ExtractStrings
 
             using (Stream stream = File.OpenRead(options.Input))
             {
-                 stringFile = new StringFile(stream, options.SaintsRow2Mode);
+                 stringFile = new StringFile(stream, language, instance);
             }
 
-            var hashes = stringFile.GetHashes();
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.IndentChars = "\t";
+            settings.NewLineChars = "\r\n";
 
-            Dictionary<string, string> hashStrings = new Dictionary<string, string>();
-            foreach (var hash in hashes)
+            Dictionary<string, string> stringsWithName = new Dictionary<string, string>();
+            Dictionary<uint, string> stringsWithHash = new Dictionary<uint, string>();
+
+            foreach (uint hash in stringFile.GetHashes())
             {
-                string text = stringFile.GetString(hash).Replace("\n", "\\n");
+                string text = stringFile.GetString(hash);
+
                 if (hashLookup.ContainsKey(hash))
-                {
-                    hashStrings.Add("\"" + hashLookup[hash] + "\"", text);
-                }
+                    stringsWithName.Add(hashLookup[hash], text);
                 else
-                {
-                    hashStrings.Add(String.Format("{0}", hash), text);
-                }
+                    stringsWithHash.Add(hash, text);
             }
 
-            string[] keys = hashStrings.Keys.ToArray();
-            Array.Sort(keys);
+            
 
-            using (StreamWriter sw = new StreamWriter(outputFile, false, System.Text.Encoding.UTF8))
+            using (XmlWriter xml = XmlTextWriter.Create(outputFile, settings))
             {
-                foreach (string key in keys)
+                xml.WriteStartDocument();
+                xml.WriteStartElement("Strings");
+                xml.WriteAttributeString("Language", language.ToString());
+                xml.WriteAttributeString("Game", instance.Game.ToString());
+                
+                foreach (var pair in stringsWithName.OrderBy(x => x.Key))
                 {
-                    string text = hashStrings[key];
-                    sw.WriteLine("{0}: \"{1}\"", key, text);
+                    xml.WriteStartElement("String");
+
+                    xml.WriteAttributeString("Name", pair.Key);
+                    xml.WriteString(pair.Value);
+
+                    xml.WriteEndElement(); // String
                 }
+
+                foreach (var pair in stringsWithHash)
+                {
+                    xml.WriteStartElement("String");
+
+                    xml.WriteAttributeString("Hash", pair.Key.ToString("X8"));
+                    xml.WriteString(pair.Value);
+
+                    xml.WriteEndElement(); // String
+                    
+                }
+
+                xml.WriteEndElement(); // Strings
+                xml.WriteEndDocument();
             }
 
             Console.WriteLine("Done.");

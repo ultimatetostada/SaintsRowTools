@@ -57,6 +57,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Other items", "Other items"
 		pack_release.cmd = pack_release.cmd
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThomasJepp.SaintsRow.ConvertStrings", "ThomasJepp.SaintsRow.ConvertStrings\ThomasJepp.SaintsRow.ConvertStrings.csproj", "{48A37C26-26DB-4757-A9BD-E2F719DE73FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -237,6 +239,16 @@ Global
 		{DFA9D923-DBB3-48F2-A903-F89BFD1E50B6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{DFA9D923-DBB3-48F2-A903-F89BFD1E50B6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{DFA9D923-DBB3-48F2-A903-F89BFD1E50B6}.Release|Win32.ActiveCfg = Release|Any CPU
+		{48A37C26-26DB-4757-A9BD-E2F719DE73FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48A37C26-26DB-4757-A9BD-E2F719DE73FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48A37C26-26DB-4757-A9BD-E2F719DE73FD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{48A37C26-26DB-4757-A9BD-E2F719DE73FD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{48A37C26-26DB-4757-A9BD-E2F719DE73FD}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{48A37C26-26DB-4757-A9BD-E2F719DE73FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48A37C26-26DB-4757-A9BD-E2F719DE73FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48A37C26-26DB-4757-A9BD-E2F719DE73FD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{48A37C26-26DB-4757-A9BD-E2F719DE73FD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{48A37C26-26DB-4757-A9BD-E2F719DE73FD}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -257,5 +269,6 @@ Global
 		{1740283B-664B-477C-8804-3AF4A06C4E42} = {1E3F6590-EB28-4A91-B692-260585D491FF}
 		{FC751620-B0A7-4201-862F-C8C8D20590E5} = {9518BA6D-6E70-4554-8835-6BEB894358E5}
 		{DFA9D923-DBB3-48F2-A903-F89BFD1E50B6} = {9518BA6D-6E70-4554-8835-6BEB894358E5}
+		{48A37C26-26DB-4757-A9BD-E2F719DE73FD} = {08693709-C743-408F-9D26-199327AF25A4}
 	EndGlobalSection
 EndGlobal

@@ -40,13 +40,15 @@
             this.SourceBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.AsmFilePicker = new System.Windows.Forms.OpenFileDialog();
             this.PackfileSaveDialog = new System.Windows.Forms.SaveFileDialog();
+            this.GameComboBox = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ProgressMessage
             // 
             this.ProgressMessage.BackColor = System.Drawing.Color.Transparent;
             this.ProgressMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.ProgressMessage.Location = new System.Drawing.Point(12, 99);
+            this.ProgressMessage.Location = new System.Drawing.Point(12, 125);
             this.ProgressMessage.Name = "ProgressMessage";
             this.ProgressMessage.Size = new System.Drawing.Size(400, 23);
             this.ProgressMessage.TabIndex = 5;
@@ -54,7 +56,7 @@
             // BuildPackfileButton
             // 
             this.BuildPackfileButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.BuildPackfileButton.Location = new System.Drawing.Point(418, 99);
+            this.BuildPackfileButton.Location = new System.Drawing.Point(418, 125);
             this.BuildPackfileButton.Name = "BuildPackfileButton";
             this.BuildPackfileButton.Size = new System.Drawing.Size(75, 23);
             this.BuildPackfileButton.TabIndex = 4;
@@ -64,7 +66,7 @@
             // 
             // ProgressIndicator
             // 
-            this.ProgressIndicator.Location = new System.Drawing.Point(12, 70);
+            this.ProgressIndicator.Location = new System.Drawing.Point(12, 96);
             this.ProgressIndicator.Name = "ProgressIndicator";
             this.ProgressIndicator.Size = new System.Drawing.Size(481, 23);
             this.ProgressIndicator.TabIndex = 3;
@@ -143,11 +145,36 @@
             this.PackfileSaveDialog.Filter = "Streamed Packfile|*.str2_pc|Normal Packfile|*.vpp_pc|All files|*.*";
             this.PackfileSaveDialog.Title = "Enter the filename of the packfile you wish to create:";
             // 
+            // GameComboBox
+            // 
+            this.GameComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.GameComboBox.FormattingEnabled = true;
+            this.GameComboBox.Items.AddRange(new object[] {
+            "Saints Row 2",
+            "Saints Row IV",
+            "Saints Row: Gat out of Hell"});
+            this.GameComboBox.Location = new System.Drawing.Point(141, 69);
+            this.GameComboBox.Name = "GameComboBox";
+            this.GameComboBox.Size = new System.Drawing.Size(271, 21);
+            this.GameComboBox.TabIndex = 13;
+            this.GameComboBox.SelectedIndexChanged += new System.EventHandler(this.GameComboBox_SelectedIndexChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 72);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(38, 13);
+            this.label2.TabIndex = 14;
+            this.label2.Text = "Game:";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(505, 130);
+            this.ClientSize = new System.Drawing.Size(505, 155);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.GameComboBox);
             this.Controls.Add(this.AsmBrowse);
             this.Controls.Add(this.AsmPath);
             this.Controls.Add(this.SourceBrowse);
@@ -157,6 +184,9 @@
             this.Controls.Add(this.ProgressMessage);
             this.Controls.Add(this.BuildPackfileButton);
             this.Controls.Add(this.ProgressIndicator);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "MainForm";
             this.Text = "Saints Row IV Packfile Builder";
             this.ResumeLayout(false);
@@ -178,6 +208,8 @@
         private System.Windows.Forms.FolderBrowserDialog SourceBrowser;
         private System.Windows.Forms.OpenFileDialog AsmFilePicker;
         private System.Windows.Forms.SaveFileDialog PackfileSaveDialog;
+        private System.Windows.Forms.ComboBox GameComboBox;
+        private System.Windows.Forms.Label label2;
 
 
     }

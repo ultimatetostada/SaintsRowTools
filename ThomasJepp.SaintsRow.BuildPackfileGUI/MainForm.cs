@@ -89,12 +89,58 @@ namespace ThomasJepp.SaintsRow.BuildPackfileGUI
         }
         #endregion
 
+        private GameSteamID GetSelectedGame()
+        {
+            if (GameComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("You must select a game before you can build a package.");
+                return (GameSteamID)(-1);
+            }
+
+            string text = (string)GameComboBox.SelectedItem;
+            switch (text)
+            {
+                case "Saints Row 2": return GameSteamID.SaintsRow2;
+                case "Saints Row IV": return GameSteamID.SaintsRowIV;
+                case "Saints Row: Gat out of Hell": return GameSteamID.SaintsRowGatOutOfHell;
+                default:
+                    {
+                        MessageBox.Show("You must select a game before you can build a package.");
+                        return (GameSteamID)(-1);
+                    }
+            }
+        }
+
         private void BuildPackfileButton_Click(object sender, EventArgs e)
         {
-            DialogResult dr = PackfileSaveDialog.ShowDialog();
-            if (dr == System.Windows.Forms.DialogResult.OK)
+            GameSteamID game = GetSelectedGame();
+            switch (game)
             {
-                BeginBuild(SourceFolderPath.Text, PackfileSaveDialog.FileName, UpdateASM.Checked ? AsmPath.Text : null);
+                case GameSteamID.SaintsRow2:
+                    {
+                        PackfileSaveDialog.Filter = "Normal Packfile|*.vpp_pc|All files|*.*";
+                        PackfileSaveDialog.DefaultExt = "vpp_pc";
+                        DialogResult dr = PackfileSaveDialog.ShowDialog();
+                        if (dr == System.Windows.Forms.DialogResult.OK)
+                        {
+                            BeginBuild(SourceFolderPath.Text, PackfileSaveDialog.FileName, UpdateASM.Checked ? AsmPath.Text : null, game);
+                        }
+
+                        break;
+                    }
+                case GameSteamID.SaintsRowIV:
+                case GameSteamID.SaintsRowGatOutOfHell:
+                    {
+                        PackfileSaveDialog.Filter = "Streamed Packfile|*.str2_pc|Normal Packfile|*.vpp_pc|All files|*.*";
+                        PackfileSaveDialog.DefaultExt = "str2_pc";
+                        DialogResult dr = PackfileSaveDialog.ShowDialog();
+                        if (dr == System.Windows.Forms.DialogResult.OK)
+                        {
+                            BeginBuild(SourceFolderPath.Text, PackfileSaveDialog.FileName, UpdateASM.Checked ? AsmPath.Text : null, game);
+                        }
+
+                        break;
+                    }
             }
         }
 
@@ -103,12 +149,14 @@ namespace ThomasJepp.SaintsRow.BuildPackfileGUI
             public string Source { get; set; }
             public string Asm { get; set; }
             public string Destination { get; set; }
+            public GameSteamID Game { get; set; }
 
-            public BuildOptions(string source, string destination, string asm)
+            public BuildOptions(string source, string destination, string asm, GameSteamID game)
             {
                 Source = source;
                 Destination = destination;
                 Asm = asm;
+                Game = game;
             }
         }
 
@@ -124,56 +172,103 @@ namespace ThomasJepp.SaintsRow.BuildPackfileGUI
             }
         }
 
-        Dictionary<string, PackageOptions> OptionsList = new Dictionary<string, PackageOptions>
+        Dictionary<GameSteamID, Dictionary<string, PackageOptions>> OptionsList = new Dictionary<GameSteamID,Dictionary<string,PackageOptions>>
         {
-            { "characters.vpp_pc", new PackageOptions(false, false) },
-            { "customize_item.vpp_pc", new PackageOptions(false, false) },
-            { "customize_player.vpp_pc", new PackageOptions(false, false) },
-            { "cutscene_sounds.vpp_pc", new PackageOptions(false, false) },
-            { "cutscene_tables.vpp_pc", new PackageOptions(true, false) },
-            { "cutscenes.vpp_pc", new PackageOptions(false, false) },
-            { "da_tables.vpp_pc", new PackageOptions(true, false) },
-            { "decals.vpp_pc", new PackageOptions(false, false) },
-            { "dlc1.vpp_pc", new PackageOptions(false, false) },
-            { "dlc2.vpp_pc", new PackageOptions(false, false) },
-            { "dlc3.vpp_pc", new PackageOptions(false, false) },
-            { "dlc4.vpp_pc", new PackageOptions(false, false) },
-            { "dlc5.vpp_pc", new PackageOptions(false, false) },
-            { "dlc6.vpp_pc", new PackageOptions(false, false) },
-            { "effects.vpp_pc", new PackageOptions(false, false) },
-            { "high_mips.vpp_pc", new PackageOptions(false, false) },
-            { "interface.vpp_pc", new PackageOptions(false, false) },
-            { "interface_startup.vpp_pc", new PackageOptions(false, false) },
-            { "items.vpp_pc", new PackageOptions(false, false) },
-            { "misc.vpp_pc", new PackageOptions(true, false) },
-            { "misc_tables.vpp_pc", new PackageOptions(true, false) },
-            { "patch_compressed.vpp_pc", new PackageOptions(true, false) },
-            { "patch_uncompressed.vpp_pc", new PackageOptions(false, false) },
-            { "player_morph.vpp_pc", new PackageOptions(false, false) },
-            { "player_taunts.vpp_pc", new PackageOptions(false, false) },
-            { "preload_anim.vpp_pc", new PackageOptions(false, true) },
-            { "preload_effects.vpp_pc", new PackageOptions(false, false) },
-            { "preload_items.vpp_pc", new PackageOptions(false, false) },
-            { "preload_rigs.vpp_pc", new PackageOptions(false, true) },
-            { "shaders.vpp_pc", new PackageOptions(true, false) },
-            { "skybox.vpp_pc", new PackageOptions(false, false) },
-            { "sound_turbo.vpp_pc", new PackageOptions(true, false) },
-            { "soundboot.vpp_pc", new PackageOptions(true, true) },
-            { "sounds.vpp_pc", new PackageOptions(false, false) },
-            { "sounds_common.vpp_pc", new PackageOptions(false, false) },
-            { "sr3_city_0.vpp_pc", new PackageOptions(false, false) },
-            { "sr3_city_1.vpp_pc", new PackageOptions(false, false) },
-            { "sr3_city_missions.vpp_pc", new PackageOptions(false, false) },
-            { "startup.vpp_pc", new PackageOptions(false, false) },
-            { "superpowers.vpp_pc", new PackageOptions(false, false) },
-            { "vehicles.vpp_pc", new PackageOptions(false, false) },
-            { "vehicles_preload.vpp_pc", new PackageOptions(true, false) },
-            { "voices.vpp_pc", new PackageOptions(false, false) },
+            {
+                GameSteamID.SaintsRowIV,
+                new Dictionary<string, PackageOptions>
+                {
+                    { "characters.vpp_pc", new PackageOptions(false, false) },
+                    { "customize_item.vpp_pc", new PackageOptions(false, false) },
+                    { "customize_player.vpp_pc", new PackageOptions(false, false) },
+                    { "cutscene_sounds.vpp_pc", new PackageOptions(false, false) },
+                    { "cutscene_tables.vpp_pc", new PackageOptions(true, false) },
+                    { "cutscenes.vpp_pc", new PackageOptions(false, false) },
+                    { "da_tables.vpp_pc", new PackageOptions(true, false) },
+                    { "decals.vpp_pc", new PackageOptions(false, false) },
+                    { "dlc1.vpp_pc", new PackageOptions(false, false) },
+                    { "dlc2.vpp_pc", new PackageOptions(false, false) },
+                    { "dlc3.vpp_pc", new PackageOptions(false, false) },
+                    { "dlc4.vpp_pc", new PackageOptions(false, false) },
+                    { "dlc5.vpp_pc", new PackageOptions(false, false) },
+                    { "dlc6.vpp_pc", new PackageOptions(false, false) },
+                    { "effects.vpp_pc", new PackageOptions(false, false) },
+                    { "high_mips.vpp_pc", new PackageOptions(false, false) },
+                    { "interface.vpp_pc", new PackageOptions(false, false) },
+                    { "interface_startup.vpp_pc", new PackageOptions(false, false) },
+                    { "items.vpp_pc", new PackageOptions(false, false) },
+                    { "misc.vpp_pc", new PackageOptions(true, false) },
+                    { "misc_tables.vpp_pc", new PackageOptions(true, false) },
+                    { "patch_compressed.vpp_pc", new PackageOptions(true, false) },
+                    { "patch_uncompressed.vpp_pc", new PackageOptions(false, false) },
+                    { "player_morph.vpp_pc", new PackageOptions(false, false) },
+                    { "player_taunts.vpp_pc", new PackageOptions(false, false) },
+                    { "preload_anim.vpp_pc", new PackageOptions(false, true) },
+                    { "preload_effects.vpp_pc", new PackageOptions(false, false) },
+                    { "preload_items.vpp_pc", new PackageOptions(false, false) },
+                    { "preload_rigs.vpp_pc", new PackageOptions(false, true) },
+                    { "shaders.vpp_pc", new PackageOptions(true, false) },
+                    { "skybox.vpp_pc", new PackageOptions(false, false) },
+                    { "sound_turbo.vpp_pc", new PackageOptions(true, false) },
+                    { "soundboot.vpp_pc", new PackageOptions(true, true) },
+                    { "sounds.vpp_pc", new PackageOptions(false, false) },
+                    { "sounds_common.vpp_pc", new PackageOptions(false, false) },
+                    { "sr3_city_0.vpp_pc", new PackageOptions(false, false) },
+                    { "sr3_city_1.vpp_pc", new PackageOptions(false, false) },
+                    { "sr3_city_missions.vpp_pc", new PackageOptions(false, false) },
+                    { "startup.vpp_pc", new PackageOptions(false, false) },
+                    { "superpowers.vpp_pc", new PackageOptions(false, false) },
+                    { "vehicles.vpp_pc", new PackageOptions(false, false) },
+                    { "vehicles_preload.vpp_pc", new PackageOptions(true, false) },
+                    { "voices.vpp_pc", new PackageOptions(false, false) },
+                }
+            },
+            {
+                GameSteamID.SaintsRowGatOutOfHell,
+                new Dictionary<string, PackageOptions>
+                {
+                    { "characters.vpp_pc", new PackageOptions(false, false) },
+                    { "customize_item.vpp_pc", new PackageOptions(false, false) },
+                    { "customize_player.vpp_pc", new PackageOptions(false, false) },
+                    { "cutscene_sounds.vpp_pc", new PackageOptions(false, false) },
+                    { "cutscene_tables.vpp_pc", new PackageOptions(true, false) },
+                    { "cutscenes.vpp_pc", new PackageOptions(false, false) },
+                    { "da_tables.vpp_pc", new PackageOptions(true, false) },
+                    { "decals.vpp_pc", new PackageOptions(false, false) },
+                    { "effects.vpp_pc", new PackageOptions(false, false) },
+                    { "high_mips.vpp_pc", new PackageOptions(false, false) },
+                    { "interface.vpp_pc", new PackageOptions(false, false) },
+                    { "interface_startup.vpp_pc", new PackageOptions(false, false) },
+                    { "items.vpp_pc", new PackageOptions(false, false) },
+                    { "misc.vpp_pc", new PackageOptions(true, false) },
+                    { "misc_tables.vpp_pc", new PackageOptions(true, false) },
+                    { "player_morph.vpp_pc", new PackageOptions(false, false) },
+                    { "player_taunts.vpp_pc", new PackageOptions(false, false) },
+                    { "preload_anim.vpp_pc", new PackageOptions(false, true) },
+                    { "preload_effects.vpp_pc", new PackageOptions(false, false) },
+                    { "preload_items.vpp_pc", new PackageOptions(false, false) },
+                    { "preload_rigs.vpp_pc", new PackageOptions(false, true) },
+                    { "shaders.vpp_pc", new PackageOptions(true, false) },
+                    { "skybox.vpp_pc", new PackageOptions(false, false) },
+                    { "sound_turbo.vpp_pc", new PackageOptions(true, false) },
+                    { "soundboot.vpp_pc", new PackageOptions(true, true) },
+                    { "sounds.vpp_pc", new PackageOptions(false, false) },
+                    { "sounds_common.vpp_pc", new PackageOptions(false, false) },
+                    { "sr4_5_city_0.vpp_pc", new PackageOptions(false, false) },
+                    { "sr4_5_city_1.vpp_pc", new PackageOptions(false, false) },
+                    { "sr4_5_city_missions.vpp_pc", new PackageOptions(false, false) },
+                    { "startup.vpp_pc", new PackageOptions(false, false) },
+                    { "superpowers.vpp_pc", new PackageOptions(false, false) },
+                    { "vehicles.vpp_pc", new PackageOptions(false, false) },
+                    { "vehicles_preload.vpp_pc", new PackageOptions(true, false) },
+                    { "voices.vpp_pc", new PackageOptions(false, false) },
+                }
+            },
         };
 
-        private void BeginBuild(string source, string destination, string asm)
+        private void BeginBuild(string source, string destination, string asm, GameSteamID game)
         {
-            var options = new BuildOptions(source, destination, asm);
+            var options = new BuildOptions(source, destination, asm, game);
 
             ParameterizedThreadStart pts = new ParameterizedThreadStart(DoBuild);
             Thread t = new Thread(pts);
@@ -186,7 +281,27 @@ namespace ThomasJepp.SaintsRow.BuildPackfileGUI
             BuildOptions options = (BuildOptions)o;
 
             SetProgressBarSettings(0, 100, 1, ProgressBarStyle.Marquee);
-            IPackfile packfile = new Packfiles.Version0A.Packfile(Path.GetExtension(options.Destination) == ".str2_pc");
+            IPackfile packfile = null;
+
+            switch (options.Game)
+            {
+                case GameSteamID.SaintsRow2:
+                    {
+                        packfile = new Packfiles.Version04.Packfile();
+                        break;
+                    }
+                case GameSteamID.SaintsRowIV:
+                case GameSteamID.SaintsRowGatOutOfHell:
+                    {
+                        packfile = new Packfiles.Version0A.Packfile(Path.GetExtension(options.Destination) == ".str2_pc");
+                        break;
+                    }
+                default:
+                    {
+                        throw new NotImplementedException();
+                    }
+            }
+
             Stream2File asm = null;
             Stream2.Container thisContainer = null;
 
@@ -208,9 +323,9 @@ namespace ThomasJepp.SaintsRow.BuildPackfileGUI
             else
             {
                 string filename = Path.GetFileName(options.Destination);
-                if (OptionsList.ContainsKey(filename))
+                if (OptionsList.ContainsKey(options.Game) && OptionsList[options.Game].ContainsKey(filename))
                 {
-                    var vppOptions = OptionsList[filename];
+                    var vppOptions = OptionsList[options.Game][filename];
 
                     packfile.IsCondensed = vppOptions.Condense;
                     packfile.IsCompressed = vppOptions.Compress;
@@ -345,6 +460,22 @@ namespace ThomasJepp.SaintsRow.BuildPackfileGUI
             if (dr == System.Windows.Forms.DialogResult.OK)
             {
                 AsmPath.Text = AsmFilePicker.FileName;
+            }
+        }
+
+        private void GameComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (GameComboBox.SelectedItem != null && ((string)GameComboBox.SelectedItem) == "Saints Row 2")
+            {
+                AsmPath.Enabled = false;
+                AsmBrowse.Enabled = false;
+                UpdateASM.Enabled = false;
+            }
+            else
+            {
+                AsmPath.Enabled = true;
+                AsmBrowse.Enabled = true;
+                UpdateASM.Enabled = false;
             }
         }
     }

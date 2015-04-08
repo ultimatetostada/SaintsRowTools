@@ -14,7 +14,6 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version04
 
         private Dictionary<string, Stream> m_Streams;
 
-        public long DataOffset = 0;
         public Stream DataStream;
 
         public Packfile()
@@ -25,6 +24,8 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version04
 
         public Packfile(Stream stream)
         {
+            DataStream = stream;
+
             stream.Seek(0, SeekOrigin.Begin);
             FileData = stream.ReadStruct<PackfileFileData>();
 
@@ -52,12 +53,13 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version04
 
                 m_Files.Add(new PackfileEntry(this, fileData, name + "." + extension));
             }
+
+            
         }
 
         public void Dispose()
         {
-            if (DataOffset == 0)
-                DataStream.Dispose();
+            DataStream.Dispose();
         }
 
         public List<IPackfileEntry> Files
@@ -105,7 +107,7 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version04
             return (CalculateEntryNamesOffset() + FileData.NamesSize).Align(2048);
         }
 
-        private long CalculateDataStartOffset()
+        internal long CalculateDataStartOffset()
         {
             return (CalculateExtensionsOffset() + FileData.ExtensionsSize).Align(2048);
         }

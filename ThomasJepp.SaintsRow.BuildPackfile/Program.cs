@@ -2,6 +2,7 @@
 using System.IO;
 
 using CmdLine;
+using ThomasJepp.SaintsRow.GameInstances;
 using ThomasJepp.SaintsRow.Packfiles;
 using ThomasJepp.SaintsRow.Stream2;
 
@@ -12,7 +13,7 @@ namespace ThomasJepp.SaintsRow.BuildPackfile
         [CommandLineArguments(Program = "ThomasJepp.SaintsRow.BuildPackfile", Title = "Saints Row Packfile Builder", Description = "Builds Saints Row PC packfiles (vpp_pc and str2_pc files). Supports Saints Row IV.")]
         internal class Options
         {
-            [CommandLineParameter(Name = "game", ParameterIndex = 1, Required = true, Description = "The game you wish to build a packfile for. Valid options are \"sr2\", \"srtt\" and \"sriv\".")]
+            [CommandLineParameter(Name = "game", ParameterIndex = 1, Required = true, Description = "The game you wish to build a packfile for. Valid options are \"sr2\", \"srtt\", \"sriv\" and \"srgooh\".")]
             public string Game { get; set; }
 
             [CommandLineParameter(Name = "source", ParameterIndex = 2, Required = true, Description = "A folder containing files to pack.")]
@@ -27,7 +28,7 @@ namespace ThomasJepp.SaintsRow.BuildPackfile
             [CommandLineParameter(Command = "compressed", Description = "Should the output data be compressed? This is usually enabled for str2_pc files and for vpp_pc files that contain highly compressible data such as XTBL files. If not specified, \"\auto\" is the default.", ValueExample = "true|false|auto",Default="auto")]
             public string Compressed { get; set; }
 
-            [CommandLineParameter(Command = "asm", Description = "The asm_pc file to update with new data from this packfile. This should only be used in Saints Row IV or Saints Row: The Third mode, and will automatically update the specified ASM file. If you are building a str2_pc file, this should be specified. It has no effect for vpp_pc files.", ValueExample = "<asm_pc file>")]
+            [CommandLineParameter(Command = "asm", Description = "The asm_pc file to update with new data from this packfile. This should only be used in Saints Row: Gat out of Hell, Saints Row IV or Saints Row: The Third mode, and will automatically update the specified ASM file. If you are building a str2_pc file, this should be specified. It has no effect for vpp_pc files.", ValueExample = "<asm_pc file>")]
             public string AsmFile { get; set; }
         }
 
@@ -55,15 +56,17 @@ namespace ThomasJepp.SaintsRow.BuildPackfile
             Stream2File asm = null;
 
             Console.WriteLine("Building {0} using data from {1}.", options.Output, options.Source);
-            switch (options.Game.ToLowerInvariant())
+            IGameInstance instance = GameInstance.GetFromString(options.Game);
+            switch (instance.Game)
             {
-                case "sr2":
+                case GameSteamID.SaintsRow2:
+                    packfile = new Packfiles.Version04.Packfile();
+                    break;
+                case GameSteamID.SaintsRowTheThird:
                     throw new NotImplementedException();
                     break;
-                case "srtt":
-                    throw new NotImplementedException();
-                    break;
-                case "sriv":
+                case GameSteamID.SaintsRowIV:
+                case GameSteamID.SaintsRowGatOutOfHell:
                     packfile = new Packfiles.Version0A.Packfile(Path.GetExtension(options.Output) == ".str2_pc");
                     if (Path.GetExtension(options.Output) == ".str2_pc")
                     {
@@ -80,6 +83,8 @@ namespace ThomasJepp.SaintsRow.BuildPackfile
                         }
                     }
                     break;
+                default:
+                    throw new NotImplementedException();
             }
 
             if (options.Condensed.ToLowerInvariant() == "true")

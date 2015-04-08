@@ -147,11 +147,12 @@ namespace ThomasJepp.SaintsRow
             }
         }
 
-        public static void WriteAsciiNullTerminatedString(this Stream stream, string data)
+        public static int WriteAsciiNullTerminatedString(this Stream stream, string data)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(data);
             stream.Write(bytes, 0, bytes.Length);
             stream.WriteByte(0);
+            return bytes.Length + 1;
         }
 
         public static string ReadAsciiString(this Stream stream, int length)
@@ -161,10 +162,11 @@ namespace ThomasJepp.SaintsRow
             return Encoding.ASCII.GetString(bytes);
         }
 
-        public static void WriteAsciiString(this Stream stream, string data)
+        public static int WriteAsciiString(this Stream stream, string data)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(data);
             stream.Write(bytes, 0, bytes.Length);
+            return bytes.Length;
         }
         #endregion
 

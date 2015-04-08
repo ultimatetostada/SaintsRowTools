@@ -59,12 +59,13 @@ namespace ThomasJepp.SaintsRow.RecursiveExtractor
                 }
             }
 
-            Console.WriteLine("found {0} packfiles, containing {1} files.", packfiles, totalFiles);
+            Console.WriteLine("found {0} packfiles, containing {1} files.", packfiles.Count, totalFiles);
 
             int currentFile = 0;
 
             foreach (var packfilePair in packfiles)
             {
+                Console.WriteLine("{0} Compressed: {1} Condensed: {2}", packfilePair.Key, packfilePair.Value.IsCompressed, packfilePair.Value.IsCondensed);
                 Directory.CreateDirectory(Path.Combine(options.Output, packfilePair.Key));
                 foreach (var file in packfilePair.Value.Files)
                 {

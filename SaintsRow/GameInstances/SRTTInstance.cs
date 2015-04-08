@@ -56,7 +56,7 @@ namespace ThomasJepp.SaintsRow.GameInstances
                     Stream s = OpenPackfileFile(name, packfileToTry);
                     return s;
                 }
-                catch (FileNotFoundException ex)
+                catch (FileNotFoundException)
                 {
                 }
             }

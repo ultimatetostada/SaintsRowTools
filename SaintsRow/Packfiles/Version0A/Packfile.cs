@@ -175,8 +175,12 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version0A
 
             for (int i = 0; i < Files.Count; i++)
             {
-                IPackfileEntry entry = Files[i];
-                Stream fs = m_Streams[entry.Name];
+                PackfileEntry entry = Files[i] as PackfileEntry;
+                Stream fs;
+                if (entry.HasStream)
+                    fs = entry.GetStream();
+                else
+                    fs = m_Streams[entry.Name];
 
                 bool isLast = (i == (Files.Count - 1));
 

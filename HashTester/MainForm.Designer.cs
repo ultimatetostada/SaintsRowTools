@@ -36,6 +36,7 @@
             this.AudiokineticHashOut = new System.Windows.Forms.TextBox();
             this.CrcVolitionOut = new System.Windows.Forms.TextBox();
             this.HashVolitionOut = new System.Windows.Forms.TextBox();
+            this.CrcVolitionDecimal = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // InputBox
@@ -107,11 +108,21 @@
             this.HashVolitionOut.Size = new System.Drawing.Size(100, 20);
             this.HashVolitionOut.TabIndex = 7;
             // 
+            // CrcVolitionDecimal
+            // 
+            this.CrcVolitionDecimal.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.CrcVolitionDecimal.Location = new System.Drawing.Point(217, 169);
+            this.CrcVolitionDecimal.Name = "CrcVolitionDecimal";
+            this.CrcVolitionDecimal.ReadOnly = true;
+            this.CrcVolitionDecimal.Size = new System.Drawing.Size(100, 20);
+            this.CrcVolitionDecimal.TabIndex = 8;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(543, 227);
+            this.Controls.Add(this.CrcVolitionDecimal);
             this.Controls.Add(this.HashVolitionOut);
             this.Controls.Add(this.CrcVolitionOut);
             this.Controls.Add(this.AudiokineticHashOut);
@@ -140,6 +151,7 @@
         private System.Windows.Forms.TextBox AudiokineticHashOut;
         private System.Windows.Forms.TextBox CrcVolitionOut;
         private System.Windows.Forms.TextBox HashVolitionOut;
+        private System.Windows.Forms.TextBox CrcVolitionDecimal;
     }
 }
 

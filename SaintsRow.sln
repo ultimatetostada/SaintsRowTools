@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThomasJepp.SaintsRow", "SaintsRow\ThomasJepp.SaintsRow.csproj", "{F660C694-866A-4814-936E-5A180D8543D2}"
 EndProject
@@ -58,6 +58,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Other items", "Other items"
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThomasJepp.SaintsRow.ConvertStrings", "ThomasJepp.SaintsRow.ConvertStrings\ThomasJepp.SaintsRow.ConvertStrings.csproj", "{48A37C26-26DB-4757-A9BD-E2F719DE73FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MakeDummyClothSim", "MakeDummyClothSim\MakeDummyClothSim.csproj", "{A678CDF5-A9E9-4D76-8E74-EC435EF0C961}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -249,6 +251,18 @@ Global
 		{48A37C26-26DB-4757-A9BD-E2F719DE73FD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{48A37C26-26DB-4757-A9BD-E2F719DE73FD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{48A37C26-26DB-4757-A9BD-E2F719DE73FD}.Release|Win32.ActiveCfg = Release|Any CPU
+		{A678CDF5-A9E9-4D76-8E74-EC435EF0C961}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A678CDF5-A9E9-4D76-8E74-EC435EF0C961}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A678CDF5-A9E9-4D76-8E74-EC435EF0C961}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{A678CDF5-A9E9-4D76-8E74-EC435EF0C961}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{A678CDF5-A9E9-4D76-8E74-EC435EF0C961}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{A678CDF5-A9E9-4D76-8E74-EC435EF0C961}.Debug|Win32.Build.0 = Debug|Any CPU
+		{A678CDF5-A9E9-4D76-8E74-EC435EF0C961}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A678CDF5-A9E9-4D76-8E74-EC435EF0C961}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A678CDF5-A9E9-4D76-8E74-EC435EF0C961}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{A678CDF5-A9E9-4D76-8E74-EC435EF0C961}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{A678CDF5-A9E9-4D76-8E74-EC435EF0C961}.Release|Win32.ActiveCfg = Release|Any CPU
+		{A678CDF5-A9E9-4D76-8E74-EC435EF0C961}.Release|Win32.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -270,5 +284,6 @@ Global
 		{FC751620-B0A7-4201-862F-C8C8D20590E5} = {9518BA6D-6E70-4554-8835-6BEB894358E5}
 		{DFA9D923-DBB3-48F2-A903-F89BFD1E50B6} = {9518BA6D-6E70-4554-8835-6BEB894358E5}
 		{48A37C26-26DB-4757-A9BD-E2F719DE73FD} = {08693709-C743-408F-9D26-199327AF25A4}
+		{A678CDF5-A9E9-4D76-8E74-EC435EF0C961} = {1E3F6590-EB28-4A91-B692-260585D491FF}
 	EndGlobalSection
 EndGlobal

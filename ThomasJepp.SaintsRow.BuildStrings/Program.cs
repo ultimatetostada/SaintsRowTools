@@ -92,7 +92,7 @@ namespace ThomasJepp.SaintsRow.BuildStrings
                 }
                 else
                 {
-                    hash = uint.Parse(stringNode.Attribute("Hash").Value);
+                    hash = uint.Parse(stringNode.Attribute("Hash").Value, System.Globalization.NumberStyles.HexNumber);
                 }
 
 

@@ -28,7 +28,7 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
             [CommandLineParameter(Name = "output", ParameterIndex = 3, Required = false, Description = "The location to save the extracted data. If not specified, the packfile will be extracted to a new folder with the same name in the current directory.")]
             public string Output { get; set; }
 
-            [CommandLineParameter(Command = "convert", Default = true, Description = @"Convert the audio into playble OGG files. Requires ww2ogg and revorb in the same directory. Valid options are ""true"" and ""false"". Defaults to ""true"".", Name = "Convert audio")]
+            [CommandLineParameter(Command = "convert", Default = true, Description = @"Convert the audio into playble OGG files. Requires ww2ogg and revorb in the ""external"" directory. Valid options are ""true"" and ""false"". Defaults to ""true"".", Name = "Convert audio")]
             public bool ConvertAudio { get; set; }
 
             [CommandLineParameter(Command = "codebooks", Default = null, Description = @"Override the codebooks in use by revorb. This should be a full path to a codebooks file.", Name = "Codebooks")]
@@ -65,7 +65,7 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
 
             IGameInstance instance = GameInstance.GetFromString(options.Game);
 
-            string ww2ogg = Path.Combine(ExeLocation, "ww2ogg.exe");
+            string ww2ogg = Path.Combine(ExeLocation, "external", "ww2ogg.exe");
             string codebooks = null;
             string codebooksPath = options.Codebooks;
 
@@ -82,11 +82,11 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
                         break;
                     default: throw new NotImplementedException();
                 }
-                codebooksPath = Path.Combine(ExeLocation, codebooks);
+                codebooksPath = Path.Combine(ExeLocation, "external", codebooks);
             }
 
 
-            string revorb = Path.Combine(ExeLocation, "revorb.exe");
+            string revorb = Path.Combine(ExeLocation, "external", "revorb.exe");
             bool failedToFindConversionRequirements = false;
             if (options.ConvertAudio)
             {

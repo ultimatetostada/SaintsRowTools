@@ -61,6 +61,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Content Include="external\revorb.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="external\ww2ogg.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="extract-soundbank-srgooh.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -68,6 +74,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="extract-soundbank-sr3.cmd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="external\packed_codebooks.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="external\packed_codebooks_aoTuV_603.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -97,7 +109,9 @@
   <PropertyGroup>
     <PostBuildEvent>if not exist "$(SolutionDir)$(OutDir)" mkdir "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)$(TargetName).*" "$(SolutionDir)$(OutDir)"
-copy /Y "$(TargetDir)*.cmd" "$(SolutionDir)$(OutDir)"</PostBuildEvent>
+copy /Y "$(TargetDir)*.cmd" "$(SolutionDir)$(OutDir)"
+if not exist "$(SolutionDir)$(OutDir)\external" mkdir "$(SolutionDir)$(OutDir)\external"
+copy /Y "$(TargetDir)external\*.*" "$(SolutionDir)$(OutDir)\external\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

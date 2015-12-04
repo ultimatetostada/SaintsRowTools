@@ -7,10 +7,11 @@ using System.Xml.Linq;
 
 using CmdLine;
 using ThomasJepp.SaintsRow.Packfiles;
+using ThomasJepp.SaintsRow.AssetAssembler;
 
 namespace ThomasJepp.SaintsRow.Stream2
 {
-    [CommandLineArguments(Program = "ThomasJepp.SaintsRow.Stream2", Title = "Saints Row Stream2 File Tool", Description = "Performs various actions on Stream2 files (ASM files). Supports Saints Row IV.")]
+    [CommandLineArguments(Program = "ThomasJepp.SaintsRow.Stream2", Title = "Saints Row Stream2 File Tool", Description = "Performs various actions on Stream2 files (ASM files). Supports Saints Row: The Third, Saints Row IV and Saints Row: Gat out of Hell.")]
     internal class Options
     {
         [CommandLineParameter(Name = "source", ParameterIndex = 1, Required = true, Description = "The Stream2 Container to process.")]
@@ -52,7 +53,7 @@ namespace ThomasJepp.SaintsRow.Stream2
                     {
                         using (Stream stream = File.OpenRead(options.Source))
                         {
-                            Stream2File file = new Stream2File(stream);
+                            IAssetAssemblerFile file = AssetAssemblerFile.FromStream(stream);
 
                             if (options.Output == null || options.Output == "")
                             {
@@ -68,6 +69,7 @@ namespace ThomasJepp.SaintsRow.Stream2
                             {
                                 xml.WriteStartDocument();
                                 xml.WriteStartElement("AssetAssembler");
+                                xml.WriteAttributeString("Version", file.Version.ToString());
 
                                 xml.WriteStartElement("AllocatorTypes");
                                 foreach (var pair in file.AllocatorTypes)
@@ -121,21 +123,21 @@ namespace ThomasJepp.SaintsRow.Stream2
                                     for (int i = 0; i < container.PrimitiveCount; i++)
                                     {
                                         var primitive = container.Primitives[i];
-                                        var sizes = container.PrimitiveSizes[i];
+                                        //var sizes = container.PrimitiveSizes[i];
 
                                         xml.WriteStartElement("Primitive");
 
                                         xml.WriteAttributeString("Name", primitive.Name);
-                                        xml.WriteAttributeString("Type", file.PrimitiveTypes[primitive.Data.Type]);
-                                        xml.WriteAttributeString("Allocator", file.AllocatorTypes.ContainsKey(primitive.Data.Allocator) ? file.AllocatorTypes[primitive.Data.Allocator] : primitive.Data.Allocator.ToString());
-                                        xml.WriteAttributeString("Flags", primitive.Data.Flags.ToString());
-                                        xml.WriteAttributeString("ExtensionIndex", primitive.Data.ExtensionIndex.ToString());
-                                        xml.WriteAttributeString("CPUSize", primitive.Data.CPUSize.ToString());
-                                        xml.WriteAttributeString("GPUSize", primitive.Data.GPUSize.ToString());
-                                        xml.WriteAttributeString("AllocationGroup", primitive.Data.AllocationGroup.ToString());
+                                        xml.WriteAttributeString("Type", file.PrimitiveTypes[primitive.Type]);
+                                        xml.WriteAttributeString("Allocator", file.AllocatorTypes.ContainsKey(primitive.Allocator) ? file.AllocatorTypes[primitive.Allocator] : primitive.Allocator.ToString());
+                                        xml.WriteAttributeString("Flags", primitive.Flags.ToString());
+                                        xml.WriteAttributeString("ExtensionIndex", primitive.ExtensionIndex.ToString());
+                                        xml.WriteAttributeString("CPUSize", primitive.CPUSize.ToString());
+                                        xml.WriteAttributeString("GPUSize", primitive.GPUSize.ToString());
+                                        xml.WriteAttributeString("AllocationGroup", primitive.AllocationGroup.ToString());
 
-                                        xml.WriteAttributeString("WriteTimeCPUSize", sizes.CPUSize.ToString());
-                                        xml.WriteAttributeString("WriteTimeGPUSize", sizes.GPUSize.ToString());
+                                        //xml.WriteAttributeString("WriteTimeCPUSize", sizes.CPUSize.ToString());
+                                        //xml.WriteAttributeString("WriteTimeGPUSize", sizes.GPUSize.ToString());
 
                                         xml.WriteEndElement(); // Primitive
                                     }
@@ -156,8 +158,10 @@ namespace ThomasJepp.SaintsRow.Stream2
                         using (Stream stream = File.OpenRead(options.Source))
                         {
                             XDocument xml = XDocument.Load(stream);
+                            var asmNode = xml.Element("AssetAssembler");
+                            uint version = uint.Parse(asmNode.Attribute("Version").Value);
 
-                            Stream2File file = new Stream2File();
+                            IAssetAssemblerFile file = AssetAssemblerFile.Create(version);
 
                             if (options.Output == null || options.Output == "")
                             {
@@ -194,7 +198,7 @@ namespace ThomasJepp.SaintsRow.Stream2
 
                             foreach (var cNode in xml.Descendants("Container"))
                             {
-                                Container container = new Container();
+                                IContainer container = file.CreateContainer();
                                 container.Name = cNode.Attribute("Name").Value;
                                 container.ContainerType = containerTypesLookup[cNode.Attribute("Type").Value];
                                 container.Flags = (ContainerFlags)ushort.Parse(cNode.Attribute("Flags").Value);
@@ -214,39 +218,29 @@ namespace ThomasJepp.SaintsRow.Stream2
                                 
                                 foreach (var pNode in cNode.Descendants("Primitive"))
                                 {
-                                    Primitive p = new Primitive();
+                                    IPrimitive p = container.CreatePrimitive();
                                     p.Name = pNode.Attribute("Name").Value;
-                                    p.Data = new PrimitiveData();
-                                    p.Data.Type = primitiveTypesLookup[pNode.Attribute("Type").Value];
+                                    p.Type = primitiveTypesLookup[pNode.Attribute("Type").Value];
                                     byte allocatorType = 0;
                                     if (byte.TryParse(pNode.Attribute("Allocator").Value, out allocatorType))
                                     {
-                                        p.Data.Allocator = allocatorType;
+                                        p.Allocator = allocatorType;
                                     }
                                     else
                                     {
-                                        p.Data.Allocator = allocatorTypesLookup[pNode.Attribute("Allocator").Value];
+                                        p.Allocator = allocatorTypesLookup[pNode.Attribute("Allocator").Value];
                                     }
-                                    p.Data.Flags = byte.Parse(pNode.Attribute("Flags").Value);
-                                    p.Data.ExtensionIndex = byte.Parse(pNode.Attribute("ExtensionIndex").Value);
-                                    p.Data.CPUSize = uint.Parse(pNode.Attribute("CPUSize").Value);
-                                    p.Data.GPUSize = uint.Parse(pNode.Attribute("GPUSize").Value);
-                                    p.Data.AllocationGroup = byte.Parse(pNode.Attribute("AllocationGroup").Value);
+                                    p.Flags = byte.Parse(pNode.Attribute("Flags").Value);
+                                    p.ExtensionIndex = byte.Parse(pNode.Attribute("ExtensionIndex").Value);
+                                    p.CPUSize = uint.Parse(pNode.Attribute("CPUSize").Value);
+                                    p.GPUSize = uint.Parse(pNode.Attribute("GPUSize").Value);
+                                    p.AllocationGroup = byte.Parse(pNode.Attribute("AllocationGroup").Value);
                                     container.Primitives.Add(p);
-
-                                    WriteTimeSizes size = new WriteTimeSizes();
-                                    size.CPUSize = uint.Parse(pNode.Attribute("WriteTimeCPUSize").Value);
-                                    size.GPUSize = uint.Parse(pNode.Attribute("WriteTimeGPUSize").Value);
-                                    container.PrimitiveSizes.Add(size);
                                 }
 
-                                container.PrimitiveCount = (ushort)container.Primitives.Count;
+                                container.PrimitiveCount = (short)container.Primitives.Count;
                                 file.Containers.Add(container);
                             }
-
-                            file.Header.Signature = (uint)0xBEEFFEED;
-                            file.Header.Version = (ushort)0x000C;
-                            file.Header.NumContainers = (short)file.Containers.Count;
 
                             using (Stream outputStream = File.Create(options.Output))
                             {
@@ -257,10 +251,10 @@ namespace ThomasJepp.SaintsRow.Stream2
                     }
                 case "update":
                     {
-                        Stream2File file = null;
+                        IAssetAssemblerFile file = null;
                         using (Stream stream = File.OpenRead(options.Source))
                         {
-                            file = new Stream2File(stream);
+                            file = AssetAssemblerFile.FromStream(stream);
 
                             string folder = Path.GetDirectoryName(options.Source);
 
@@ -293,15 +287,15 @@ namespace ThomasJepp.SaintsRow.Stream2
                     }
                 case "clean":
                     {
-                        Stream2File file = null;
+                        IAssetAssemblerFile file = null;
                         using (Stream stream = File.OpenRead(options.Source))
                         {
-                            file = new Stream2File(stream);
+                            file = AssetAssemblerFile.FromStream(stream);
 
                             string folder = Path.GetDirectoryName(options.Source);
 
                             List<string> foundContainerNames = new List<string>();
-                            List<Container> duplicates = new List<Container>();
+                            List<IContainer> duplicates = new List<IContainer>();
                             foreach (var container in file.Containers)
                             {
                                 if (!foundContainerNames.Contains(container.Name))
@@ -318,7 +312,6 @@ namespace ThomasJepp.SaintsRow.Stream2
                             {
                                 file.Containers.Remove(container);
                             }
-                            file.Header.NumContainers = (short)file.Containers.Count;
                         }
 
                         using (Stream stream = File.Create(options.Source))

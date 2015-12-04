@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Ionic.Zlib;
 
-using ThomasJepp.SaintsRow.Stream2;
+using ThomasJepp.SaintsRow.AssetAssembler;
 
 namespace ThomasJepp.SaintsRow.Packfiles.Version0A
 {
@@ -323,17 +323,19 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version0A
         }
 
 
-        public void Update(Container container)
+        public void Update(IContainer container)
         {
+            AssetAssembler.Version0C.Container c = container as AssetAssembler.Version0C.Container;
+
             Dictionary<string, int> fileLookup = new Dictionary<string,int>();
             for (int i = 0; i < m_Files.Count; i++)
             {
                 fileLookup.Add(m_Files[i].Name, i);
             }
 
-            container.PackfileBaseOffset = (uint)CalculateDataStartOffset();
-            container.TotalCompressedPackfileReadSize = (int)FileData.CompressedDataSize;
-            foreach (Primitive primitive in container.Primitives)
+            c.PackfileBaseOffset = (uint)CalculateDataStartOffset();
+            c.TotalCompressedPackfileReadSize = (int)FileData.CompressedDataSize;
+            foreach (IPrimitive primitive in c.Primitives)
             {
                 if (!fileLookup.ContainsKey(primitive.Name))
                 {
@@ -342,7 +344,7 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version0A
 
                 IPackfileEntry iEntry = m_Files[fileLookup[primitive.Name]];
                 PackfileEntry entry = (PackfileEntry)iEntry;
-                primitive.Data.CPUSize = entry.Data.Size;
+                primitive.CPUSize = entry.Data.Size;
 
                 string gpuFile = "";
                 string extension = Path.GetExtension(primitive.Name);
@@ -362,17 +364,8 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version0A
                 {
                     IPackfileEntry iGpuEntry = m_Files[fileLookup[gpuFile]];
                     PackfileEntry gpuEntry = (PackfileEntry)iGpuEntry;
-                    primitive.Data.GPUSize = (uint)gpuEntry.Size;
+                    primitive.GPUSize = (uint)gpuEntry.Size;
                 }
-            }
-
-            for (int i = 0; i < container.PrimitiveSizes.Count; i++)
-            {
-                var sizes = container.PrimitiveSizes[i];
-                var primitiveData = container.Primitives[i];
-                sizes.CPUSize = primitiveData.Data.CPUSize;
-                sizes.GPUSize = primitiveData.Data.GPUSize;
-                container.PrimitiveSizes[i] = sizes;
             }
         }
     }

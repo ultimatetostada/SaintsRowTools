@@ -6,13 +6,13 @@ using System.Linq;
 using CmdLine;
 
 using ThomasJepp.SaintsRow.Packfiles;
-using ThomasJepp.SaintsRow.Stream2;
+using ThomasJepp.SaintsRow.AssetAssembler;
 
 namespace ThomasJepp.SaintsRow.Stream2Update
 {
     static class Program
     {
-        [CommandLineArguments(Program = "ThomasJepp.SaintsRow.Stream2Update", Title = "Saints Row Stream2 Update Tool", Description = "Fetches the required ASM files for your mods and updates them as necessary. Supports Saints Row IV.")]
+        [CommandLineArguments(Program = "ThomasJepp.SaintsRow.Stream2Update", Title = "Saints Row Stream2 Update Tool", Description = "Fetches the required ASM files for your mods and updates them as necessary. Supports Saints Row: The Third, Saints Row IV and Saints Row: Gat out of Hell.")]
         internal class Options
         {
             [CommandLineParameter(Name = "source", ParameterIndex = 1, Required = false, Description = "Your Saints Row IV install folder. If blank, this will be autodetected.")]
@@ -39,11 +39,18 @@ namespace ThomasJepp.SaintsRow.Stream2Update
 
             if (options.Source == null)
             {
+                string srtt = ThomasJepp.SaintsRow.Utility.GetGamePath(GameSteamID.SaintsRowTheThird);
                 string sriv = ThomasJepp.SaintsRow.Utility.GetGamePath(GameSteamID.SaintsRowIV);
                 string srgooh = ThomasJepp.SaintsRow.Utility.GetGamePath(GameSteamID.SaintsRowGatOutOfHell);
 
-                int gameCount = 0, srivNum = 0, srgoohNum = 0;
+                int gameCount = 0, srttNum = 0, srivNum = 0, srgoohNum = 0;
                 Console.WriteLine("Detected the following games:");
+                if (srtt != null)
+                {
+                    gameCount++;
+                    srttNum = gameCount;
+                    Console.WriteLine("{0}. Saints Row The Third: {1}", gameCount, srtt);
+                }
                 if (sriv != null)
                 {
                     gameCount++;
@@ -66,7 +73,12 @@ namespace ThomasJepp.SaintsRow.Stream2Update
                     Console.WriteLine();
                     if (input.Key == ConsoleKey.D1 || input.Key == ConsoleKey.NumPad1)
                     {
-                        if (srivNum == 1)
+                        if (srttNum == 1)
+                        {
+                            options.Source = srtt;
+                            Console.WriteLine("Updating Saints Row: The Third files.");
+                        }
+                        else if (srivNum == 1)
                         {
                             options.Source = sriv;
                             Console.WriteLine("Updating Saints Row IV files.");
@@ -79,7 +91,12 @@ namespace ThomasJepp.SaintsRow.Stream2Update
                     }
                     else if (input.Key == ConsoleKey.D2 || input.Key == ConsoleKey.NumPad2)
                     {
-                        if (srivNum == 2)
+                        if (srttNum == 2)
+                        {
+                            options.Source = srtt;
+                            Console.WriteLine("Updating Saints Row: The Third files.");
+                        }
+                        else if(srivNum == 2)
                         {
                             options.Source = sriv;
                             Console.WriteLine("Updating Saints Row IV files.");
@@ -99,7 +116,7 @@ namespace ThomasJepp.SaintsRow.Stream2Update
 
             if (options.Source == null)
             {
-                Console.WriteLine("Couldn't find the Saints Row IV folder?");
+                Console.WriteLine("Couldn't find a Saints Row folder?");
 
                 Console.WriteLine();
                 Console.WriteLine("Press enter to exit.");
@@ -132,7 +149,7 @@ namespace ThomasJepp.SaintsRow.Stream2Update
 
             string packfileCache = Path.Combine(options.Source, "packfiles", "pc", "cache");
 
-            Dictionary<string, Stream2File> asmsToSave = new Dictionary<string, Stream2File>();
+            Dictionary<string, IAssetAssemblerFile> asmsToSave = new Dictionary<string, IAssetAssemblerFile>();
 
             string[] packfiles = Directory.GetFiles(packfileCache, "*.vpp_pc");
             int vppCount = 0;
@@ -152,7 +169,7 @@ namespace ThomasJepp.SaintsRow.Stream2Update
 
                             using (Stream asmStream = packedFile.GetStream())
                             {
-                                Stream2File asm = new Stream2File(asmStream);
+                                IAssetAssemblerFile asm = AssetAssemblerFile.FromStream(asmStream);
 
                                 foreach (var container in asm.Containers)
                                 {

@@ -5,7 +5,7 @@ using System.IO;
 
 using ThomasJepp.SaintsRow;
 using ThomasJepp.SaintsRow.Packfiles;
-using ThomasJepp.SaintsRow.Stream2;
+using ThomasJepp.SaintsRow.AssetAssembler;
 
 namespace RepackTest
 {
@@ -39,10 +39,10 @@ namespace RepackTest
 
                 foreach (string asmFile in asmFiles)
                 {
-                    Stream2File asm = null;
+                    IAssetAssemblerFile asm = null;
                     using (Stream stream = File.OpenRead(asmFile))
                     {
-                        asm = new Stream2File(stream);
+                        asm = AssetAssemblerFile.FromStream(stream);
                     }
 
                     int count = 0;

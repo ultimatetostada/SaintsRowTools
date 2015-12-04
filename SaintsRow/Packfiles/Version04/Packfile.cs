@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Ionic.Zlib;
 
-using ThomasJepp.SaintsRow.Stream2;
+using ThomasJepp.SaintsRow.AssetAssembler;
 
 namespace ThomasJepp.SaintsRow.Packfiles.Version04
 {
@@ -196,7 +196,7 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version04
         }
 
 
-        public void Update(Container container)
+        public void Update(IContainer container)
         {
             throw new NotImplementedException("Saints Row 2 does not have ASM files.");
         }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-using ThomasJepp.SaintsRow.Stream2;
+using ThomasJepp.SaintsRow.AssetAssembler;
 
 namespace ThomasJepp.SaintsRow.Packfiles
 {
@@ -16,6 +16,6 @@ namespace ThomasJepp.SaintsRow.Packfiles
 
         void Save(Stream stream);
         void AddFile(Stream stream, string filename);
-        void Update(Container container);
+        void Update(IContainer container);
     }
 }

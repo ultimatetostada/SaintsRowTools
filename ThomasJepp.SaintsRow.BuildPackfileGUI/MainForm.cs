@@ -10,7 +10,7 @@ using System.Threading;
 using System.Windows.Forms;
 
 using ThomasJepp.SaintsRow.Packfiles;
-using ThomasJepp.SaintsRow.Stream2;
+using ThomasJepp.SaintsRow.AssetAssembler;
 
 namespace ThomasJepp.SaintsRow.BuildPackfileGUI
 {
@@ -196,8 +196,8 @@ namespace ThomasJepp.SaintsRow.BuildPackfileGUI
                     }
             }
 
-            Stream2File asm = null;
-            Stream2.Container thisContainer = null;
+            IAssetAssemblerFile asm = null;
+            AssetAssembler.IContainer thisContainer = null;
 
             SetText("Setting up...");
 
@@ -210,7 +210,7 @@ namespace ThomasJepp.SaintsRow.BuildPackfileGUI
                 {
                     using (Stream asmStream = File.OpenRead(options.Asm))
                     {
-                        asm = new Stream2File(asmStream);
+                        asm = AssetAssemblerFile.FromStream(asmStream);
                     }
                 }
             }
@@ -251,7 +251,7 @@ namespace ThomasJepp.SaintsRow.BuildPackfileGUI
                 SetProgressBarSettings(0, thisContainer.PrimitiveCount, 0, ProgressBarStyle.Continuous);
                 SetText("Adding files...");
 
-                foreach (Primitive primitive in thisContainer.Primitives)
+                foreach (IPrimitive primitive in thisContainer.Primitives)
                 {
                     string primitiveFile = Path.Combine(options.Source, primitive.Name);
                     if (!File.Exists(primitiveFile))

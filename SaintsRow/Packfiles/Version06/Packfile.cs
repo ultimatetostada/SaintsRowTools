@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Ionic.Zlib;
 
-using ThomasJepp.SaintsRow.Stream2;
+using ThomasJepp.SaintsRow.AssetAssembler;
 
 namespace ThomasJepp.SaintsRow.Packfiles.Version06
 {
@@ -155,7 +155,7 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version06
         }
 
 
-        public void Update(Container container)
+        public void Update(IContainer container)
         {
             throw new NotImplementedException();
         }

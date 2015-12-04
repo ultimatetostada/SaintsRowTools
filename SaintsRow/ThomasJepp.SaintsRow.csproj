@@ -46,6 +46,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssetAssembler\AssetAssemblerFile.cs" />
+    <Compile Include="AssetAssembler\IAssetAssemblerFile.cs" />
+    <Compile Include="AssetAssembler\IPrimitive.cs" />
+    <Compile Include="AssetAssembler\IContainer.cs" />
+    <Compile Include="AssetAssembler\Version0B\AssetAssemblerFile.cs" />
+    <Compile Include="AssetAssembler\Version0B\Container.cs" />
+    <Compile Include="AssetAssembler\ContainerFlags.cs" />
+    <Compile Include="AssetAssembler\Version0B\Primitive.cs" />
+    <Compile Include="AssetAssembler\Version0B\PrimitiveData.cs" />
+    <Compile Include="AssetAssembler\Version0B\Stream2ContainerHeader.cs" />
+    <Compile Include="AssetAssembler\Version0B\WriteTimeSizes.cs" />
+    <Compile Include="AssetAssembler\Version0C\AssetAssemblerFile.cs" />
+    <Compile Include="AssetAssembler\Version0C\Container.cs" />
+    <Compile Include="AssetAssembler\Version0C\Primitive.cs" />
+    <Compile Include="AssetAssembler\Version0C\PrimitiveData.cs" />
+    <Compile Include="AssetAssembler\Version0C\Stream2ContainerHeader.cs" />
+    <Compile Include="AssetAssembler\Version0C\WriteTimeSizes.cs" />
     <Compile Include="ByteHelpers.cs" />
     <Compile Include="GameInstances\FileSearchResult.cs" />
     <Compile Include="GameSteamID.cs" />
@@ -107,13 +124,6 @@
     <Compile Include="Soundbanks\Wwise\Sections\HIRC\SoundFXObject.cs" />
     <Compile Include="Soundbanks\Wwise\WwiseSoundbank.cs" />
     <Compile Include="Steam\KeyValues.cs" />
-    <Compile Include="Stream2\ContainerFlags.cs" />
-    <Compile Include="Stream2\Container.cs" />
-    <Compile Include="Stream2\ContainerFileHeader.cs" />
-    <Compile Include="Stream2\Primitive.cs" />
-    <Compile Include="Stream2\PrimitiveData.cs" />
-    <Compile Include="Stream2\Stream2File.cs" />
-    <Compile Include="Stream2\WriteTimeSizes.cs" />
     <Compile Include="StreamHelpers.cs" />
     <Compile Include="Localization\LanguageUtility.cs" />
     <Compile Include="Strings\StringBucket.cs" />

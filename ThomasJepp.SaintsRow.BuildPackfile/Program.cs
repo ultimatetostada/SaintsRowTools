@@ -4,7 +4,7 @@ using System.IO;
 using CmdLine;
 using ThomasJepp.SaintsRow.GameInstances;
 using ThomasJepp.SaintsRow.Packfiles;
-using ThomasJepp.SaintsRow.Stream2;
+using ThomasJepp.SaintsRow.AssetAssembler;
 
 namespace ThomasJepp.SaintsRow.BuildPackfile
 {
@@ -53,7 +53,7 @@ namespace ThomasJepp.SaintsRow.BuildPackfile
             }
 
             IPackfile packfile = null;
-            Stream2File asm = null;
+            IAssetAssemblerFile asm = null;
 
             Console.WriteLine("Building {0} using data from {1}.", options.Output, options.Source);
             IGameInstance instance = GameInstance.GetFromString(options.Game);
@@ -64,7 +64,6 @@ namespace ThomasJepp.SaintsRow.BuildPackfile
                     break;
                 case GameSteamID.SaintsRowTheThird:
                     throw new NotImplementedException();
-                    break;
                 case GameSteamID.SaintsRowIV:
                 case GameSteamID.SaintsRowGatOutOfHell:
                     packfile = new Packfiles.Version0A.Packfile(Path.GetExtension(options.Output) == ".str2_pc");
@@ -77,7 +76,7 @@ namespace ThomasJepp.SaintsRow.BuildPackfile
                             Console.WriteLine("Will update asm_pc file {0} with data for new package.", options.AsmFile);
                             using (Stream asmStream = File.OpenRead(options.AsmFile))
                             {
-                                asm = new Stream2File(asmStream);
+                                asm = AssetAssemblerFile.FromStream(asmStream);
                             }
 
                         }
@@ -97,7 +96,7 @@ namespace ThomasJepp.SaintsRow.BuildPackfile
             else if (options.Compressed.ToLowerInvariant() == "false")
                 packfile.IsCompressed = false;
 
-            Container thisContainer = null;
+            IContainer thisContainer = null;
 
             if (asm != null)
             {
@@ -116,7 +115,7 @@ namespace ThomasJepp.SaintsRow.BuildPackfile
                 if (thisContainer == null)
                     throw new Exception(String.Format("Unable to find container {0} in asm_pc file {1}.", containerName, options.AsmFile));
 
-                foreach (Primitive primitive in thisContainer.Primitives)
+                foreach (IPrimitive primitive in thisContainer.Primitives)
                 {
                     string primitiveFile = Path.Combine(options.Source, primitive.Name);
                     if (!File.Exists(primitiveFile))

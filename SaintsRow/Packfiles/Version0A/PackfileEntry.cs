@@ -21,6 +21,11 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version0A
             get { return (int)Data.Size; }
         }
 
+        public bool HasStream
+        {
+            get { return Data.Size != 0 && Packfile.DataStream != null; }
+        }
+
         public Stream GetStream()
         {
             byte[] data = new byte[Data.Size];

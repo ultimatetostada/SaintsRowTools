@@ -127,6 +127,13 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version0A
             m_Streams.Add(filename, stream);
         }
 
+        public void RemoveFile(IPackfileEntry entry)
+        {
+            Files.Remove(entry);
+            if (m_Streams != null && m_Streams.ContainsKey(entry.Name))
+                m_Streams.Remove(entry.Name);
+        }
+
         private long GetEntryDataOffset()
         {
             return 0x28;
@@ -180,7 +187,10 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version0A
                 if (entry.HasStream)
                     fs = entry.GetStream();
                 else
+                {
                     fs = m_Streams[entry.Name];
+                    fs.Seek(0, SeekOrigin.Begin);
+                }
 
                 bool isLast = (i == (Files.Count - 1));
 
@@ -264,7 +274,8 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version0A
                     uncompressedSize += data.Size;
                 }
 
-                fs.Close();
+                if (entry.HasStream)
+                    fs.Close();
 
                 pfE.Data = data;
             }

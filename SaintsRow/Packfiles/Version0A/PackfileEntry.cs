@@ -23,7 +23,7 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version0A
 
         public bool HasStream
         {
-            get { return Data.Size != 0; }
+            get { return Data.Size != 0 && Packfile.DataStream != null; }
         }
 
         public Stream GetStream()

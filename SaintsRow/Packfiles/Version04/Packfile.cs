@@ -200,5 +200,44 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version04
         {
             throw new NotImplementedException("Saints Row 2 does not have ASM files.");
         }
+
+        public bool ContainsFile(string filename)
+        {
+            foreach (PackfileEntry entry in Files)
+            {
+                if (entry.Name == filename)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void RemoveFile(string filename)
+        {
+            PackfileEntry entry = null;
+
+            foreach (PackfileEntry e in Files)
+            {
+                if (e.Name == filename)
+                {
+                    entry = e;
+                    break;
+                }
+            }
+
+            if (entry == null)
+                return;
+
+            RemoveFile(entry);
+        }
+
+        public void RemoveFile(IPackfileEntry entry)
+        {
+            Files.Remove(entry);
+            if (m_Streams != null && m_Streams.ContainsKey(entry.Name))
+                m_Streams.Remove(entry.Name);
+        }
     }
 }

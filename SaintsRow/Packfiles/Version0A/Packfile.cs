@@ -134,6 +134,38 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version0A
                 m_Streams.Remove(entry.Name);
         }
 
+        public bool ContainsFile(string filename)
+        {
+            foreach (PackfileEntry entry in Files)
+            {
+                if (entry.Name == filename)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void RemoveFile(string filename)
+        {
+            PackfileEntry entry = null;
+
+            foreach (PackfileEntry e in Files)
+            {
+                if (e.Name == filename)
+                {
+                    entry = e;
+                    break;
+                }
+            }
+
+            if (entry == null)
+                return;
+
+            RemoveFile(entry);
+        }
+
         private long GetEntryDataOffset()
         {
             return 0x28;

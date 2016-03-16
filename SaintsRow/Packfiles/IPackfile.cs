@@ -16,6 +16,11 @@ namespace ThomasJepp.SaintsRow.Packfiles
 
         void Save(Stream stream);
         void AddFile(Stream stream, string filename);
+        bool ContainsFile(string filename);
+        void RemoveFile(string filename);
+        void RemoveFile(IPackfileEntry entry);
+
+
         void Update(IContainer container);
     }
 }

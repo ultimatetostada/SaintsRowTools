@@ -65,6 +65,18 @@ namespace ThomasJepp.SaintsRow
             return hash;
         }
 
+        public static Int32 CustomizationItemCrc(string itemName, string maleMeshFilename, uint variantId)
+        {
+            uint itemNameHash = Hashes.CrcVolition(itemName);
+            uint fileNameHash = Hashes.CrcVolition(maleMeshFilename);
+
+            uint combinedHash = (itemNameHash << 16) | (fileNameHash & 0x0000FFFF) + variantId;
+
+            int signedHash = (int)combinedHash;
+
+            return signedHash;
+        }
+
         public static UInt32 HashVolition(string input)
         {
             UInt32 hash = 0;

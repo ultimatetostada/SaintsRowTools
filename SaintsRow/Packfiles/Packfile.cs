@@ -31,5 +31,23 @@ namespace ThomasJepp.SaintsRow.Packfiles
                     throw new Exception(String.Format("Unsupported packfile version: {0:X4}", version));
             }
         }
+
+        public static IPackfile FromVersion(int version, bool isStr2)
+        {
+            switch (version)
+            {
+                case 0x04: // Saints Row 2
+                    return new Packfiles.Version04.Packfile();
+
+                case 0x06: // Saints Row: The Third
+                    return new Packfiles.Version06.Packfile(isStr2);
+
+                case 0x0A: // Saints Row IV & Saints Row: Gat out of Hell
+                    return new Packfiles.Version0A.Packfile(isStr2);
+
+                default:
+                    throw new Exception(String.Format("Unsupported packfile version: {0:X4}", version));
+            }
+        }
     }
 }

@@ -107,6 +107,13 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version0A
             get { return m_Files[i]; }
         }
 
+        public int Version
+        {
+            get
+            {
+                return 0x0A;
+            }
+        }
 
         public bool IsCompressed
         {

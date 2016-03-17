@@ -10,6 +10,7 @@ namespace ThomasJepp.SaintsRow.Packfiles
     {
         List<IPackfileEntry> Files { get; }
         IPackfileEntry this[int i] { get; }
+        int Version { get; }
 
         bool IsCompressed { get; set; }
         bool IsCondensed { get; set; }

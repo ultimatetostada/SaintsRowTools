@@ -82,6 +82,18 @@
     <Compile Include="AssetAssembler\Version0C\Stream2ContainerHeader.cs" />
     <Compile Include="AssetAssembler\Version0C\WriteTimeSizes.cs" />
     <Compile Include="ByteHelpers.cs" />
+    <Compile Include="ClothSimulation\Version02\ClothSimCollisionPrimitiveInfo.cs" />
+    <Compile Include="ClothSimulation\Version02\ClothSimRopeInfo.cs" />
+    <Compile Include="ClothSimulation\Version02\ClothSimulationFile.cs" />
+    <Compile Include="ClothSimulation\Version02\ClothSimulationHeader.cs" />
+    <Compile Include="ClothSimulation\Version02\SimulatedNodeInfo.cs" />
+    <Compile Include="ClothSimulation\Version02\SimulatedNodeLinkInfo.cs" />
+    <Compile Include="ClothSimulation\Version05\ClothSimulationFile.cs" />
+    <Compile Include="ClothSimulation\Version05\ClothSimulationHeader.cs" />
+    <Compile Include="ClothSimulation\Version05\ClothSimRopeInfo.cs" />
+    <Compile Include="ClothSimulation\Version05\ClothSimCollisionPrimitiveInfo.cs" />
+    <Compile Include="ClothSimulation\Version05\SimulatedNodeLinkInfo.cs" />
+    <Compile Include="ClothSimulation\Version05\SimulatedNodeInfo.cs" />
     <Compile Include="GameInstances\FileSearchResult.cs" />
     <Compile Include="GameSteamID.cs" />
     <Compile Include="GameInstances\GameInstance.cs" />
@@ -91,6 +103,8 @@
     <Compile Include="GameInstances\SRIVInstance.cs" />
     <Compile Include="GameInstances\IGameInstance.cs" />
     <Compile Include="Hashes.cs" />
+    <Compile Include="MiscTypes\FLVector.cs" />
+    <Compile Include="MiscTypes\SIMDVector128.cs" />
     <Compile Include="NumberHelpers.cs" />
     <Compile Include="Packfiles\IPackfile.cs" />
     <Compile Include="Packfiles\IPackfileEntry.cs" />

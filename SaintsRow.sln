@@ -61,6 +61,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThomasJepp.SaintsRow.EditPa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomizationItemHashTool", "CustomizationItemHashTool\CustomizationItemHashTool.csproj", "{1F6F4C98-EA75-4C04-8712-1632B13B10C3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cloth Simulation", "Cloth Simulation", "{72705179-5151-414D-A48A-AB6C14DDD926}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThomasJepp.SaintsRow.ClothSim", "ThomasJepp.SaintsRow.ClothSim\ThomasJepp.SaintsRow.ClothSim.csproj", "{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -211,6 +215,14 @@ Global
 		{1F6F4C98-EA75-4C04-8712-1632B13B10C3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1F6F4C98-EA75-4C04-8712-1632B13B10C3}.Release|x64.ActiveCfg = Release|Any CPU
 		{1F6F4C98-EA75-4C04-8712-1632B13B10C3}.Release|x64.Build.0 = Release|Any CPU
+		{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}.Debug|x64.Build.0 = Debug|Any CPU
+		{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}.Release|x64.ActiveCfg = Release|Any CPU
+		{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -234,5 +246,6 @@ Global
 		{A678CDF5-A9E9-4D76-8E74-EC435EF0C961} = {1E3F6590-EB28-4A91-B692-260585D491FF}
 		{FF146B48-047B-409D-B92C-A3F5453D18FA} = {75F9E01A-9820-4561-8B28-F5428D626B45}
 		{1F6F4C98-EA75-4C04-8712-1632B13B10C3} = {1E3F6590-EB28-4A91-B692-260585D491FF}
+		{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308} = {72705179-5151-414D-A48A-AB6C14DDD926}
 	EndGlobalSection
 EndGlobal

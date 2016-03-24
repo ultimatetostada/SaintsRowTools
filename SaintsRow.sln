@@ -63,7 +63,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomizationItemHashTool",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cloth Simulation", "Cloth Simulation", "{72705179-5151-414D-A48A-AB6C14DDD926}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThomasJepp.SaintsRow.ClothSim", "ThomasJepp.SaintsRow.ClothSim\ThomasJepp.SaintsRow.ClothSim.csproj", "{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThomasJepp.SaintsRow.ConvertClothSim", "ThomasJepp.SaintsRow.ConvertClothSim\ThomasJepp.SaintsRow.ConvertClothSim.csproj", "{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

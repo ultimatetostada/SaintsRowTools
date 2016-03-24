@@ -17,6 +17,17 @@ namespace ThomasJepp.SaintsRow.ClothSimulation.Version02
         public List<List<UInt32>> RopeLinks;
         public List<ClothSimCollisionPrimitiveInfo> CollisionPrimitives;
 
+        public ClothSimulationFile()
+        {
+            Header = new ClothSimulationHeader();
+            Nodes = new List<SimulatedNodeInfo>();
+            NodeLinks = new List<SimulatedNodeLinkInfo>();
+            Ropes = new List<ClothSimRopeInfo>();
+            RopeNodes = new List<List<uint>>();
+            RopeLinks = new List<List<uint>>();
+            CollisionPrimitives = new List<ClothSimCollisionPrimitiveInfo>();
+        }
+
         public ClothSimulationFile(Stream s)
         {
             Header = s.ReadStruct<ClothSimulationHeader>();
@@ -74,6 +85,48 @@ namespace ThomasJepp.SaintsRow.ClothSimulation.Version02
             {
                 ClothSimCollisionPrimitiveInfo cscpi = s.ReadStruct<ClothSimCollisionPrimitiveInfo>();
                 CollisionPrimitives.Add(cscpi);
+            }
+        }
+
+        public void Save(Stream s)
+        {
+            s.WriteStruct(Header);
+
+            foreach (SimulatedNodeInfo sni in Nodes)
+            {
+                s.WriteStruct(sni);
+            }
+
+            foreach (SimulatedNodeLinkInfo snli in NodeLinks)
+            {
+                s.WriteStruct(snli);
+            }
+
+            foreach (ClothSimRopeInfo csri in Ropes)
+            {
+                s.WriteStruct(csri);
+            }
+
+            for (int i = 0; i < Header.NumRopes; i++)
+            {
+                List<UInt32> ropeNodes = RopeNodes[i];
+
+                foreach (UInt32 ropeNode in ropeNodes)
+                {
+                    s.WriteUInt32(ropeNode);
+                }
+
+                List<UInt32> ropeLinks = RopeLinks[i];
+
+                foreach (UInt32 ropeLink in ropeLinks)
+                {
+                    s.WriteUInt32(ropeLink);
+                }
+            }
+
+            foreach (ClothSimCollisionPrimitiveInfo cscpi in CollisionPrimitives)
+            {
+                s.WriteStruct(cscpi);
             }
         }
 

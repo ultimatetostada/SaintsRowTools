@@ -7,8 +7,8 @@
     <ProjectGuid>{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ThomasJepp.SaintsRow.ClothSim</RootNamespace>
-    <AssemblyName>ThomasJepp.SaintsRow.ClothSim</AssemblyName>
+    <RootNamespace>ThomasJepp.SaintsRow.ConvertClothSim</RootNamespace>
+    <AssemblyName>ThomasJepp.SaintsRow.ConvertClothSim</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -60,6 +60,10 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist "$(SolutionDir)$(OutDir)" mkdir "$(SolutionDir)$(OutDir)"
+copy /Y "$(TargetDir)$(TargetName).*" "$(SolutionDir)$(OutDir)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

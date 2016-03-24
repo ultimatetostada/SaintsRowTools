@@ -135,81 +135,124 @@ namespace ThomasJepp.SaintsRow.ClothSimulation.Version05
             }
         }
 
-        public void Dump(StreamWriter sw)
+        private MiscTypes.FLVector ConvertVector(MiscTypes.SIMDVector128 simdVector)
         {
-            sw.WriteLine("Header:");
-            sw.WriteLine("  Version: {0}", Header.Version);
-            sw.WriteLine("  DataSize: {0}", Header.DataSize);
-            sw.WriteLine("  Name: {0}", Header.Name);
-            sw.WriteLine("  NumPasses: {0}", Header.NumPasses);
-            sw.WriteLine("  AirResistance: {0}", Header.AirResistance);
-            sw.WriteLine("  WindMultiplier: {0}", Header.WindMultiplier);
-            sw.WriteLine("  WindConst: {0}", Header.WindConst);
-            sw.WriteLine("  GravityMultiplier: {0}", Header.GravityMultiplier);
-            sw.WriteLine("  ObjectVelocityInheritance: {0}", Header.ObjectVelocityInheritance);
-            sw.WriteLine("  ObjectPositionInheritance: {0}", Header.ObjectPositionInheritance);
-            sw.WriteLine("  ObjectRotationInheritance: {0}", Header.ObjectRotationInheritance);
-            sw.WriteLine("  WindType: {0}", Header.WindType);
-            sw.WriteLine("  NumNodes: {0}", Header.NumNodes);
-            sw.WriteLine("  NumAnchorNodes: {0}", Header.NumAnchorNodes);
-            sw.WriteLine("  NumNodeLinks: {0}", Header.NumNodeLinks);
-            sw.WriteLine("  NumRopes: {0}", Header.NumRopes);
-            sw.WriteLine("  NumColliders: {0}", Header.NumColliders);
-            sw.WriteLine("  BoundingSphereRadius: {0}", Header.BoundingSphereRadius);
-            sw.WriteLine("  NodesPtr: {0}", Header.NodesPtr);
-            sw.WriteLine("  NodeLinksPtr: {0}", Header.NodeLinksPtr);
-            sw.WriteLine("  RopesPtr: {0}", Header.RopesPtr);
-            sw.WriteLine("  CollidersPtr: {0}", Header.CollidersPtr);
-            sw.WriteLine();
+            MiscTypes.FLVector flVector = new MiscTypes.FLVector();
+            flVector.X = simdVector.X;
+            flVector.Y = simdVector.Y;
+            flVector.Z = simdVector.Z;
 
-            sw.WriteLine("Nodes:");
-            for (int i = 0; i < Nodes.Count; i++)
+            if (simdVector.Z != simdVector.DuplicateZ)
+                throw new Exception("simdVector.Z and simdVector.DuplicateZ not equal!");
+
+            return flVector;
+        }
+
+        public Version02.ClothSimulationFile ConvertToVersion2()
+        {
+            Version02.ClothSimulationFile file2 = new Version02.ClothSimulationFile();
+            file2.Header.Version = 2;
+            file2.Header.DataSize = Header.DataSize;
+            file2.Header.Name = Header.Name;
+            file2.Header.NumPasses = Header.NumPasses;
+            file2.Header.AirResistance = Header.AirResistance;
+            file2.Header.WindMultiplier = Header.WindMultiplier;
+            file2.Header.WindConst = Header.WindConst;
+            file2.Header.GravityMultiplier = Header.GravityMultiplier;
+            file2.Header.ObjectVelocityInheritance = Header.ObjectVelocityInheritance;
+            file2.Header.ObjectPositionInheritance = Header.ObjectPositionInheritance;
+            file2.Header.ObjectRotationInheritance = Header.ObjectRotationInheritance;
+            file2.Header.WindType = Header.WindType;
+            file2.Header.NumNodes = Header.NumNodes;
+            file2.Header.NumAnchorNodes = Header.NumAnchorNodes;
+            file2.Header.NumNodeLinks = Header.NumNodeLinks;
+            file2.Header.NumRopes = Header.NumRopes;
+            file2.Header.NumColliders = Header.NumColliders;
+            file2.Header.NodesPtr = (uint)Header.NodesPtr;
+            file2.Header.NodeLinksPtr = (uint)Header.NodeLinksPtr;
+            file2.Header.RopesPtr = (uint)Header.RopesPtr;
+            file2.Header.CollidersPtr = (uint)Header.CollidersPtr;
+
+            foreach (SimulatedNodeInfo sni in Nodes)
             {
-                SimulatedNodeInfo sni = Nodes[i];
-                sw.WriteLine("  Node {0}:", i);
-                sw.WriteLine("    BoneIndex: {0}", sni.BoneIndex);
-                sw.WriteLine("    ParentNodeIndex: {0}", sni.ParentNodeIndex);
-                sw.WriteLine("    GravityLink: {0}", sni.GravityLink);
-                sw.WriteLine("    Anchor: {0}", sni.Anchor);
-                sw.WriteLine("    Collide: {0}", sni.Collide);
-                sw.WriteLine("    WindMultiplier: {0}", sni.WindMultiplier);
-                sw.WriteLine("    Pos: ({0}, {1}, {2}, {3})", sni.Pos.X, sni.Pos.Y, sni.Pos.Z, sni.Pos.DuplicateZ);
-                sw.WriteLine("    LocalSpacePos: ({0}, {1}, {2}, {3})", sni.LocalSpacePos.X, sni.LocalSpacePos.Y, sni.LocalSpacePos.Z, sni.LocalSpacePos.DuplicateZ);
-            }
-            sw.WriteLine();
+                var sni2 = new Version02.SimulatedNodeInfo();
+                sni2.BoneIndex = (sbyte)sni.BoneIndex;
+                sni2.ParentNodeIndex = (sbyte)sni.ParentNodeIndex;
+                sni2.GravityLink = (sbyte)sni.GravityLink;
+                sni2.Anchor = (sbyte)sni.Anchor;
+                sni2.Collide = sni.Collide;
+                sni2.WindMultiplier = sni.WindMultiplier;
+                sni2.Pos = ConvertVector(sni.LocalSpacePos);
+                sni2.LocalSpacePos = ConvertVector(sni.Pos);
 
-            sw.WriteLine("Node Links:");
-            for (int i = 0; i < NodeLinks.Count; i++)
+                file2.Nodes.Add(sni2);
+            }
+
+            foreach (SimulatedNodeLinkInfo snli in NodeLinks)
             {
-                SimulatedNodeLinkInfo snli = NodeLinks[i];
-                sw.WriteLine("  Node Link {0}:", i);
-                sw.WriteLine("    NodeIndex1: {0}", snli.NodeIndex1);
-                sw.WriteLine("    NodeIndex2: {0}", snli.NodeIndex2);
-                sw.WriteLine("    Collide: {0}", snli.Collide);
-                sw.WriteLine("    Length: {0}", snli.Length);
-                sw.WriteLine("    StretchLen: {0}", snli.StretchLen);
-                sw.WriteLine("    Twist: {0}", snli.Twist);
-                sw.WriteLine("    Spring: {0}", snli.Spring);
-                sw.WriteLine("    Damp: {0}", snli.Damp);
-            }
-            sw.WriteLine();
+                var snli2 = new Version02.SimulatedNodeLinkInfo();
+                snli2.NodeIndex1 = snli.NodeIndex1;
+                snli2.NodeIndex2 = snli.NodeIndex2;
+                snli2.Collide = snli.Collide;
+                snli2.Length = snli.Length;
+                snli2.StretchLen = snli.StretchLen;
+                snli2.Twist = snli.Twist;
+                snli2.Spring = snli.Spring;
+                snli2.Damp = snli.Damp;
 
-            sw.WriteLine("Collision Primitives:");
-            for (int i = 0; i < CollisionPrimitives.Count; i++)
+                file2.NodeLinks.Add(snli2);
+            }
+
+            foreach (ClothSimRopeInfo csri in Ropes)
             {
-                ClothSimCollisionPrimitiveInfo cscpi = CollisionPrimitives[i];
-                sw.WriteLine("  Collision Primitive: {0}:", i);
-                sw.WriteLine("    BoneIndex: {0}", cscpi.BoneIndex);
-                sw.WriteLine("    IsCapsule: {0}", cscpi.IsCapsule);
-                sw.WriteLine("    DoScale: {0}", cscpi.DoScale);
-                sw.WriteLine("    Radius: {0}", cscpi.Radius);
-                sw.WriteLine("    Height: {0}", cscpi.Height);
-                sw.WriteLine("    Pos: ({0}, {1}, {2}, {3})", cscpi.Pos.X, cscpi.Pos.Y, cscpi.Pos.Z, cscpi.Pos.DuplicateZ);
-                sw.WriteLine("    Axis: ({0}, {1}, {2}, {3})", cscpi.Axis.X, cscpi.Axis.Y, cscpi.Axis.Z, cscpi.Axis.DuplicateZ);
-                sw.WriteLine("    LocalSpacePos: ({0}, {1}, {2}, {3})", cscpi.LocalSpacePos.X, cscpi.LocalSpacePos.Y, cscpi.LocalSpacePos.Z, cscpi.LocalSpacePos.DuplicateZ);
-            }
-            sw.WriteLine();
+                var csri2 = new Version02.ClothSimRopeInfo();
+                csri2.Length = csri.Length;
+                csri2.NumNodes = csri.NumNodes;
+                csri2.NumLinks = csri.NumLinks;
+                csri2.NodeIndecies = (uint)csri.NodeIndecies;
+                csri2.LinkIndecies = (uint)csri.LinkIndecies;
 
+                file2.Ropes.Add(csri2);
+            }
+
+            foreach (List<uint> ropeNodes in RopeNodes)
+            {
+                List<uint> ropeNodes5 = new List<uint>();
+                foreach (uint ropeNode in ropeNodes)
+                {
+                    ropeNodes5.Add(ropeNode);
+                }
+
+                file2.RopeNodes.Add(ropeNodes5);
+            }
+
+            foreach (List<uint> ropeLinks in RopeLinks)
+            {
+                List<uint> ropeLinks5 = new List<uint>();
+                foreach (uint ropeLink in ropeLinks)
+                {
+                    ropeLinks5.Add(ropeLink);
+                }
+
+                file2.RopeLinks.Add(ropeLinks5);
+            }
+
+            foreach (ClothSimCollisionPrimitiveInfo cscpi in CollisionPrimitives)
+            {
+                var cscpi2 = new Version02.ClothSimCollisionPrimitiveInfo();
+                cscpi2.BoneIndex = cscpi.BoneIndex;
+                cscpi2.IsCapsule = cscpi.IsCapsule;
+                cscpi2.DoScale = cscpi.DoScale;
+                cscpi2.Radius = cscpi.Radius;
+                cscpi2.Height = cscpi.Height;
+                cscpi2.Pos = ConvertVector(cscpi.Pos);
+                cscpi2.Axis = ConvertVector(cscpi.Axis);
+                cscpi2.LocalSpacePos = ConvertVector(cscpi.LocalSpacePos);
+
+                file2.CollisionPrimitives.Add(cscpi2);
+            }
+
+            return file2;
         }
     }
 }

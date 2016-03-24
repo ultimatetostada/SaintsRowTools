@@ -20,6 +20,6 @@ namespace ThomasJepp.SaintsRow.MiscTypes
         public float Z;
 
         [FieldOffset(0x0C)]
-        public float Unused;
+        public float DuplicateZ;
     }
 }

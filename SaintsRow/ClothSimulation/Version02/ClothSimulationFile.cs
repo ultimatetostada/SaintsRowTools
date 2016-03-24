@@ -83,6 +83,7 @@ namespace ThomasJepp.SaintsRow.ClothSimulation.Version02
             simdVector.X = flVector.X;
             simdVector.Y = flVector.Y;
             simdVector.Z = flVector.Z;
+            simdVector.DuplicateZ = flVector.Z;
 
             return simdVector;
         }
@@ -90,7 +91,7 @@ namespace ThomasJepp.SaintsRow.ClothSimulation.Version02
         public Version05.ClothSimulationFile ConvertToVersion5()
         {
             Version05.ClothSimulationFile file5 = new Version05.ClothSimulationFile();
-            file5.Header.Version = Header.Version;
+            file5.Header.Version = 5;
             file5.Header.DataSize = Header.DataSize;
             file5.Header.Name = Header.Name;
             file5.Header.NumPasses = Header.NumPasses;
@@ -107,7 +108,7 @@ namespace ThomasJepp.SaintsRow.ClothSimulation.Version02
             file5.Header.NumNodeLinks = Header.NumNodeLinks;
             file5.Header.NumRopes = Header.NumRopes;
             file5.Header.NumColliders = Header.NumColliders;
-            file5.Header.BoundingSphereRadius = 2.75948572f; // Check this value!
+            file5.Header.BoundingSphereRadius = 1f; // Check this value!
             file5.Header.NodesPtr = Header.NodesPtr;
             file5.Header.NodeLinksPtr = Header.NodeLinksPtr;
             file5.Header.RopesPtr = Header.RopesPtr;
@@ -122,8 +123,8 @@ namespace ThomasJepp.SaintsRow.ClothSimulation.Version02
                 sni5.Anchor = sni2.Anchor;
                 sni5.Collide = sni2.Collide;
                 sni5.WindMultiplier = sni2.WindMultiplier;
-                sni5.Pos = ConvertVector(sni2.Pos);
-                sni5.LocalSpacePos = ConvertVector(sni2.LocalSpacePos);
+                sni5.Pos = ConvertVector(sni2.LocalSpacePos);
+                sni5.LocalSpacePos = ConvertVector(sni2.Pos);
 
                 file5.Nodes.Add(sni5);
             }
@@ -139,7 +140,7 @@ namespace ThomasJepp.SaintsRow.ClothSimulation.Version02
                 snli5.Twist = snli2.Twist;
                 snli5.Spring = snli2.Spring;
                 snli5.Damp = snli2.Damp;
-                snli5.IsGravityLink = false;
+                snli5.IsGravityLink = true;
 
                 file5.NodeLinks.Add(snli5);
             }

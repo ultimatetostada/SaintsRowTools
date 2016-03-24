@@ -42,14 +42,32 @@ namespace ThomasJepp.SaintsRow.ClothSim
                 return;
             }
 
-            using (Stream s2 = File.OpenRead(options.Source))
+            using (Stream inputStream = File.OpenRead(options.Source))
             {
-                ClothSimulation.Version02.ClothSimulationFile file2 = new ClothSimulation.Version02.ClothSimulationFile(s2);
-                ClothSimulation.Version05.ClothSimulationFile file5 = file2.ConvertToVersion5();
+                ClothSimulation.Version02.ClothSimulationFile file2 = new ClothSimulation.Version02.ClothSimulationFile(inputStream);
+                ClothSimulation.Version05.ClothSimulationFile converted = file2.ConvertToVersion5();
 
-                using (Stream s5 = File.Create(options.Output))
+                using (StreamWriter sw = new StreamWriter("out-converted.txt"))
                 {
-                    file5.Save(s5);
+                    converted.Dump(sw);
+                }
+
+                using (Stream tempStream = File.OpenRead(@"D:\SR\Saints Row Gat Out Of Hell\extracted\customize_item.vpp_pc\custmesh_590399893f.str2_pc\cf_hair_dreads.sim_pc"))
+                {
+                    ClothSimulation.Version05.ClothSimulationFile file5 = new ClothSimulation.Version05.ClothSimulationFile(tempStream);
+
+                    using (StreamWriter sw = new StreamWriter("out-gooh.txt"))
+                    {
+                        file5.Dump(sw);
+                    }
+
+                    Console.WriteLine("aaa");
+
+                }
+
+                using (Stream outputStream = File.Create(options.Output))
+                {
+                    converted.Save(outputStream);
                 }
             }
         }

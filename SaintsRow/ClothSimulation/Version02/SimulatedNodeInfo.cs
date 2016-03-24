@@ -13,16 +13,16 @@ namespace ThomasJepp.SaintsRow.ClothSimulation.Version02
     public struct SimulatedNodeInfo
     {
         [FieldOffset(0x00)]
-        public byte BoneIndex;
+        public sbyte BoneIndex;
 
         [FieldOffset(0x01)]
-        public byte ParentNodeIndex;
+        public sbyte ParentNodeIndex;
 
         [FieldOffset(0x02)]
-        public byte GravityLink;
+        public sbyte GravityLink;
 
         [FieldOffset(0x03)]
-        public byte Anchor;
+        public sbyte Anchor;
 
         [FieldOffset(0x04)]
         public UInt32 Collide;

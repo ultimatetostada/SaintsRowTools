@@ -37,7 +37,11 @@ namespace ThomasJepp.SaintsRow.Strings
         {
             UInt32 mask = (UInt32)(Buckets.Count - 1);
             UInt32 bucketIdx = (UInt32)(hash & mask);
-            return Buckets[(int)bucketIdx][hash];
+
+            if (ContainsKey(hash))
+                return Buckets[(int)bucketIdx][hash];
+            else
+                return null;
         }
 
         public bool ContainsKey(string key)

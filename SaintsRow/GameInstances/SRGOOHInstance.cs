@@ -27,7 +27,7 @@ namespace ThomasJepp.SaintsRow.GameInstances
             string packfilePath = Path.Combine(GamePath, "packfiles", "pc", "cache", name);
 
             if (!File.Exists(packfilePath))
-                throw new FileNotFoundException("Could not find the requested packfile.", packfilePath);
+                return null;
 
             Stream s = File.OpenRead(packfilePath);
             return Packfiles.Packfile.FromStream(s, false);
@@ -50,7 +50,7 @@ namespace ThomasJepp.SaintsRow.GameInstances
             }
             else
             {
-                throw new FileNotFoundException("Could not find the requested file.", loosePath);
+                return null;
             }
         }
 
@@ -58,23 +58,23 @@ namespace ThomasJepp.SaintsRow.GameInstances
         {
             foreach (string packfileToTry in PackfilesToTry)
             {
-                try
-                {
-                    Stream s = OpenPackfileFile(name, packfileToTry);
+                Stream s = OpenPackfileFile(name, packfileToTry);
+                if (s == null)
+                    continue;
+                else
                     return s;
-                }
-                catch (FileNotFoundException)
-                {
-                }
             }
 
-            throw new FileNotFoundException("Could not find the requested file in any known packfile.", name);
+            return null;
         }
 
         public System.IO.Stream OpenPackfileFile(string name, string packfile)
         {
             using (Packfiles.IPackfile pf = OpenPackfile(packfile))
             {
+                if (pf == null)
+                    return null;
+
                 foreach (Packfiles.IPackfileEntry entry in pf.Files)
                 {
                     if (entry.Name == name)
@@ -83,7 +83,7 @@ namespace ThomasJepp.SaintsRow.GameInstances
                     }
                 }
 
-                throw new FileNotFoundException("Could not find the requested file in packfile: " + packfile, name);
+                return null;
             }
         }
 
@@ -97,7 +97,7 @@ namespace ThomasJepp.SaintsRow.GameInstances
                 }
             }
 
-            throw new FileNotFoundException("Could not find the requested file in the supplied packfile.", name);
+            return null;
         }
 
         public Dictionary<string, FileSearchResult> SearchForFiles(string pattern)

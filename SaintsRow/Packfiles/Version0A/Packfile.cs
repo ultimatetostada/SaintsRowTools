@@ -32,6 +32,7 @@ namespace ThomasJepp.SaintsRow.Packfiles.Version0A
             FileData = stream.ReadStruct<PackfileFileData>();
 
             m_Files = new List<IPackfileEntry>();
+            m_Streams = new Dictionary<string, Stream>();
 
             uint runningPosition = 0;
             List<PackfileEntryFileData> entryFileData = new List<PackfileEntryFileData>();

@@ -64,6 +64,16 @@ namespace ThomasJepp.SaintsRow.Stream2Update
                     Console.WriteLine("{0}. Saints Row Gat Out Of Hell: {1}", gameCount, srgooh);
                 }
 
+                if (gameCount == 0)
+                {
+                    Console.WriteLine("Couldn't find any installed games?");
+
+                    Console.WriteLine();
+                    Console.WriteLine("Press enter to exit.");
+                    Console.ReadLine();
+                    return;
+                }
+
                 Console.WriteLine();
                 while (true)
                 {

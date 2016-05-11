@@ -13,13 +13,20 @@ namespace ThomasJepp.SaintsRow
             return (string)Microsoft.Win32.Registry.GetValue(key, value, null);
         }
 
+        public static string GetSteamPath()
+        {
+            string steamPath = GetRegistryEntry(@"HKEY_LOCAL_MACHINE\SOFTWARE\Valve\Steam", "InstallPath");
+            if (steamPath == null)
+                steamPath = GetRegistryEntry(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Valve\Steam", "InstallPath");
+
+            return steamPath;
+        }
+
         public static string GetGamePath(GameSteamID gameId)
         {
             int id = (int)gameId;
 
-            string steamPath = GetRegistryEntry(@"HKEY_LOCAL_MACHINE\SOFTWARE\Valve\Steam", "InstallPath");
-            if (steamPath == null)
-                steamPath = GetRegistryEntry(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Valve\Steam", "InstallPath");
+            string steamPath = GetSteamPath();
 
             if (steamPath != null)
             {

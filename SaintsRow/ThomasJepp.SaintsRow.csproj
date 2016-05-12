@@ -81,6 +81,10 @@
     <Compile Include="AssetAssembler\Version0C\PrimitiveData.cs" />
     <Compile Include="AssetAssembler\Version0C\Stream2ContainerHeader.cs" />
     <Compile Include="AssetAssembler\Version0C\WriteTimeSizes.cs" />
+    <Compile Include="Bitmaps\Version13\PegEntry.cs" />
+    <Compile Include="Bitmaps\Version13\PegEntryData.cs" />
+    <Compile Include="Bitmaps\Version13\PegFile.cs" />
+    <Compile Include="Bitmaps\Version13\PegHeader.cs" />
     <Compile Include="ByteHelpers.cs" />
     <Compile Include="ClothSimulation\Version02\ClothSimCollisionPrimitiveInfo.cs" />
     <Compile Include="ClothSimulation\Version02\ClothSimRopeInfo.cs" />
@@ -103,8 +107,23 @@
     <Compile Include="GameInstances\SRIVInstance.cs" />
     <Compile Include="GameInstances\IGameInstance.cs" />
     <Compile Include="Hashes.cs" />
+    <Compile Include="Meshes\StaticMesh\CMeshCCylinder.cs" />
+    <Compile Include="Meshes\StaticMesh\CMeshCSphere.cs" />
+    <Compile Include="Meshes\StaticMesh\RenderLibBoneMapData.cs" />
+    <Compile Include="Meshes\StaticMesh\RenderLibIndexBufferData.cs" />
+    <Compile Include="Meshes\StaticMesh\RenderLibMaterialConstants.cs" />
+    <Compile Include="Meshes\StaticMesh\RenderLibMaterialData.cs" />
+    <Compile Include="Meshes\StaticMesh\RenderLibMaterialTextureDesc.cs" />
+    <Compile Include="Meshes\StaticMesh\RenderLibMeshData.cs" />
+    <Compile Include="Meshes\StaticMesh\StaticMesh.cs" />
+    <Compile Include="Meshes\StaticMesh\StaticMeshHeader.cs" />
+    <Compile Include="Meshes\StaticMesh\StaticMeshMaterial.cs" />
+    <Compile Include="Meshes\StaticMesh\StaticMeshNavpoint.cs" />
+    <Compile Include="MiscTypes\FLQuaternion.cs" />
     <Compile Include="MiscTypes\FLVector.cs" />
     <Compile Include="MiscTypes\SIMDVector128.cs" />
+    <Compile Include="MiscTypes\VWidePtrUIn64.cs" />
+    <Compile Include="MiscTypes\VWidePtrUInt32.cs" />
     <Compile Include="NumberHelpers.cs" />
     <Compile Include="Packfiles\IPackfile.cs" />
     <Compile Include="Packfiles\IPackfileEntry.cs" />
@@ -163,6 +182,8 @@
     <Compile Include="Strings\StringHeader.cs" />
     <Compile Include="SwapHelpers.cs" />
     <Compile Include="Utility.cs" />
+    <Compile Include="VFile\VFile.cs" />
+    <Compile Include="VFile\VFileHeader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

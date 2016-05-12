@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThomasJepp.SaintsRow", "SaintsRow\ThomasJepp.SaintsRow.csproj", "{F660C694-866A-4814-936E-5A180D8543D2}"
 EndProject
@@ -64,6 +64,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cloth Simulation", "Cloth Simulation", "{72705179-5151-414D-A48A-AB6C14DDD926}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThomasJepp.SaintsRow.ConvertClothSim", "ThomasJepp.SaintsRow.ConvertClothSim\ThomasJepp.SaintsRow.ConvertClothSim.csproj", "{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomizationItemClone", "CustomizationItemClone\CustomizationItemClone.csproj", "{B22B1A92-0E00-469B-A34F-AB7767C91017}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -223,6 +225,14 @@ Global
 		{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}.Release|x64.ActiveCfg = Release|Any CPU
 		{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308}.Release|x64.Build.0 = Release|Any CPU
+		{B22B1A92-0E00-469B-A34F-AB7767C91017}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B22B1A92-0E00-469B-A34F-AB7767C91017}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B22B1A92-0E00-469B-A34F-AB7767C91017}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B22B1A92-0E00-469B-A34F-AB7767C91017}.Debug|x64.Build.0 = Debug|Any CPU
+		{B22B1A92-0E00-469B-A34F-AB7767C91017}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B22B1A92-0E00-469B-A34F-AB7767C91017}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B22B1A92-0E00-469B-A34F-AB7767C91017}.Release|x64.ActiveCfg = Release|Any CPU
+		{B22B1A92-0E00-469B-A34F-AB7767C91017}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -247,5 +257,6 @@ Global
 		{FF146B48-047B-409D-B92C-A3F5453D18FA} = {75F9E01A-9820-4561-8B28-F5428D626B45}
 		{1F6F4C98-EA75-4C04-8712-1632B13B10C3} = {1E3F6590-EB28-4A91-B692-260585D491FF}
 		{DE6DCA7D-CD5A-4B0C-BDDA-B510683F9308} = {72705179-5151-414D-A48A-AB6C14DDD926}
+		{B22B1A92-0E00-469B-A34F-AB7767C91017} = {1E3F6590-EB28-4A91-B692-260585D491FF}
 	EndGlobalSection
 EndGlobal

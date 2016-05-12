@@ -13,8 +13,10 @@ using ThomasJepp.SaintsRow.AssetAssembler;
 using ThomasJepp.SaintsRow.Bitmaps.Version13;
 using ThomasJepp.SaintsRow.ClothSimulation.Version02;
 using ThomasJepp.SaintsRow.GameInstances;
+using ThomasJepp.SaintsRow.Localization;
 using ThomasJepp.SaintsRow.Packfiles;
 using ThomasJepp.SaintsRow.Meshes.StaticMesh;
+using ThomasJepp.SaintsRow.Strings;
 using ThomasJepp.SaintsRow.VFile;
 
 namespace ThomasJepp.SaintsRow.CustomizationItemClone
@@ -90,12 +92,6 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
                 VFile.VFile vFile = new VFile.VFile(inStream);
                 StaticMesh mesh = new StaticMesh(inStream);
 
-                using (Stream tempStream = File.Create(newName + ".ccmesh_pc"))
-                {
-                    vFile.Save(tempStream);
-                    mesh.Save(tempStream);
-                }
-
                 for (int i = 0; i < vFile.References.Count; i++)
                 {
                     string reference = vFile.References[i];
@@ -141,11 +137,6 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
             using (Stream pegStream = pegEntry.GetStream())
             {
                 PegFile peg = new PegFile(pegStream);
-
-                using (Stream tempStream = File.Create(newName + ".cpeg_pc"))
-                {
-                    peg.Save(tempStream);
-                }
 
                 string sharedPrefix = peg.Entries[0].Filename;
                 foreach (PegEntry entry in peg.Entries)
@@ -335,6 +326,43 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
             return null;
         }
 
+        static Dictionary<Language, Dictionary<uint, string>> languageStrings = new Dictionary<Language, Dictionary<uint, string>>();
+
+        static void LoadStrings(IGameInstance sriv)
+        {
+            var results = sriv.SearchForFiles("*.le_strings");
+            foreach (var result in results)
+            {
+                string filename = result.Value.Filename.ToLowerInvariant();
+                filename = Path.GetFileNameWithoutExtension(filename);
+
+                string[] pieces = filename.Split('_');
+                string languageCode = pieces.Last();
+
+                Language language = LanguageUtility.GetLanguageFromCode(languageCode);
+
+                if (!languageStrings.ContainsKey(language))
+                    languageStrings.Add(language, new Dictionary<uint, string>());
+
+                Dictionary<uint, string> strings = languageStrings[language];
+
+                using (Stream s = sriv.OpenPackfileFile(result.Value.Filename, result.Value.Packfile))
+                {
+                    StringFile file = new StringFile(s, language, sriv);
+
+                    foreach (var hash in file.GetHashes())
+                    {
+                        if (strings.ContainsKey(hash))
+                        {
+                            continue;
+                        }
+
+                        strings.Add(hash, file.GetString(hash));
+                    }
+                }
+            }
+        }
+
         static void Main(string[] args)
         {
             Options options = null;
@@ -360,9 +388,12 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
                 options.Output = options.NewName;
             }
 
-            Directory.CreateDirectory(options.Output);
+            string outputFolder = options.Output;
+
+            Directory.CreateDirectory(outputFolder);
 
             IGameInstance sriv = GameInstance.GetFromSteamId(GameSteamID.SaintsRowIV);
+            LoadStrings(sriv);
 
             IAssetAssemblerFile newAsm;
             using (Stream newAsmStream = File.OpenRead("template_customize_item.asm_pc"))
@@ -388,7 +419,10 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
             string itemName = itemNode.Element("Name").Value;
             itemNode.Element("Name").Value = options.NewName;
 
-            itemNode.Element("DisplayName").Value = "DUPLICATED_" + options.NewName.ToUpperInvariant();
+            string originalDisplayName = itemNode.Element("DisplayName").Value;
+            uint originalStringCrc = Hashes.CrcVolition(originalDisplayName);
+            string newDisplayName = "DUPLICATED_" + options.NewName.ToUpperInvariant();
+            itemNode.Element("DisplayName").Value = newDisplayName;
 
             List<string> str2Names = new List<string>();
 
@@ -448,8 +482,8 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
                     string newMaleStr2 = String.Format("custmesh_{0}.str2_pc", newCrc);
                     string newFemaleStr2 = String.Format("custmesh_{0}f.str2_pc", newCrc);
 
-                    bool foundMale = ClonePackfile(sriv, maleStr2, clothSimFilename, options.Output, newAsm, itemName, "cm_" + options.NewName, Path.Combine(options.NewName, newMaleStr2));
-                    bool foundFemale = ClonePackfile(sriv, femaleStr2, clothSimFilename, options.Output, newAsm, itemName, "cf_" + options.NewName, Path.Combine(options.NewName, newFemaleStr2));
+                    bool foundMale = ClonePackfile(sriv, maleStr2, clothSimFilename, options.Output, newAsm, itemName, "cm_" + options.NewName, Path.Combine(outputFolder, newMaleStr2));
+                    bool foundFemale = ClonePackfile(sriv, femaleStr2, clothSimFilename, options.Output, newAsm, itemName, "cf_" + options.NewName, Path.Combine(outputFolder, newFemaleStr2));
 
                     if (foundMale || foundFemale)
                     {
@@ -463,7 +497,7 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
                 customizationItemTable.Add(itemNode);
             }
 
-            using (Stream xtblOutStream = File.Create(Path.Combine(options.NewName, "customization_items.xtbl")))
+            using (Stream xtblOutStream = File.Create(Path.Combine(outputFolder, "customization_items.xtbl")))
             {
                 XmlWriterSettings settings = new XmlWriterSettings();
                 settings.OmitXmlDeclaration = true;
@@ -477,9 +511,56 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
                 }
             }
 
-            using (Stream asmOutStream = File.Create(Path.Combine(options.NewName, "customize_item.asm_pc")))
+            using (Stream asmOutStream = File.Create(Path.Combine(outputFolder, "customize_item.asm_pc")))
             {
                 newAsm.Save(asmOutStream);
+            }
+
+            string stringXmlFolder = Path.Combine(outputFolder, "stringxml");
+            Directory.CreateDirectory(stringXmlFolder);
+
+            foreach (var pair in languageStrings)
+            {
+                Language language = pair.Key;
+                Dictionary<uint, string> strings = pair.Value;
+
+                StringFile file = new StringFile(1, language, sriv);
+
+                string originalString = strings[originalStringCrc];
+                string newString = "CLONE: " + originalString;
+
+                file.AddString(newDisplayName, newString);
+
+                string newFilename = Path.Combine(outputFolder, String.Format("{0}_{1}.le_strings", options.NewName, LanguageUtility.GetLanguageCode(language)));
+                string newXmlFilename = Path.Combine(stringXmlFolder, String.Format("{0}_{1}.xml", options.NewName, LanguageUtility.GetLanguageCode(language)));
+
+                using (Stream s = File.Create(newFilename))
+                {
+                    file.Save(s);
+                }
+
+                XmlWriterSettings settings = new XmlWriterSettings();
+                settings.Indent = true;
+                settings.IndentChars = "\t";
+                settings.NewLineChars = "\r\n";
+
+                using (XmlWriter xml = XmlTextWriter.Create(newXmlFilename, settings))
+                {
+                    xml.WriteStartDocument();
+                    xml.WriteStartElement("Strings");
+                    xml.WriteAttributeString("Language", language.ToString());
+                    xml.WriteAttributeString("Game", sriv.Game.ToString());
+
+                    xml.WriteStartElement("String");
+
+                    xml.WriteAttributeString("Name", newDisplayName);
+                    xml.WriteString(newString);
+
+                    xml.WriteEndElement(); // String
+
+                    xml.WriteEndElement(); // Strings
+                    xml.WriteEndDocument();
+                }
             }
         }
     }

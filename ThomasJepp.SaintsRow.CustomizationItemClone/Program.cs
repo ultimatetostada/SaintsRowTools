@@ -526,8 +526,17 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
 
                 StringFile file = new StringFile(1, language, sriv);
 
-                string originalString = strings[originalStringCrc];
-                string newString = "CLONE: " + originalString;
+                string newString = "CLONE: " + options.NewName;
+                if (strings.ContainsKey(originalStringCrc))
+                {
+                    string originalString = strings[originalStringCrc];
+                    newString = "CLONE: " + originalString;
+                }
+                else
+                {
+                    Console.WriteLine("Warning: original language string could not be found for {0}.", language);
+                }
+
 
                 file.AddString(newDisplayName, newString);
 

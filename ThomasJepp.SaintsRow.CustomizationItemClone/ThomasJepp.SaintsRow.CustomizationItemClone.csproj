@@ -7,8 +7,8 @@
     <ProjectGuid>{B22B1A92-0E00-469B-A34F-AB7767C91017}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CustomizationItemClone</RootNamespace>
-    <AssemblyName>CustomizationItemClone</AssemblyName>
+    <RootNamespace>ThomasJepp.SaintsRow.CustomizationItemClone</RootNamespace>
+    <AssemblyName>ThomasJepp.SaintsRow.CustomizationItemClone</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -71,6 +71,10 @@
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist "$(SolutionDir)$(OutDir)" mkdir "$(SolutionDir)$(OutDir)"
+copy /Y "$(TargetDir)$(TargetName).*" "$(SolutionDir)$(OutDir)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

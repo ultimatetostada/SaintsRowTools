@@ -17,11 +17,11 @@ using ThomasJepp.SaintsRow.Packfiles;
 using ThomasJepp.SaintsRow.Meshes.StaticMesh;
 using ThomasJepp.SaintsRow.VFile;
 
-namespace CustomizationItemClone
+namespace ThomasJepp.SaintsRow.CustomizationItemClone
 {
     class Program
     {
-        [CommandLineArguments(Program = "CustomizationItemClone", Title = "Saints Row IV Customization Item clone tool", Description = "Clones a customization item into a new item with a new name.")]
+        [CommandLineArguments(Program = "ThomasJepp.SaintsRow.CustomizationItemClone", Title = "Saints Row IV Customization Item clone tool", Description = "Clones a customization item into a new item with a new name.")]
         internal class Options
         {
             [CommandLineParameter(Name = "source", ParameterIndex = 1, Required = true, Description = "The name of the original item to clone.")]
@@ -87,7 +87,7 @@ namespace CustomizationItemClone
 
             using (Stream inStream = oldFile.GetStream())
             {
-                VFile vFile = new VFile(inStream);
+                VFile.VFile vFile = new VFile.VFile(inStream);
                 StaticMesh mesh = new StaticMesh(inStream);
 
                 using (Stream tempStream = File.Create(newName + ".ccmesh_pc"))

@@ -396,13 +396,13 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
             LoadStrings(sriv);
 
             IAssetAssemblerFile newAsm;
-            using (Stream newAsmStream = File.OpenRead("template_customize_item.asm_pc"))
+            using (Stream newAsmStream = File.OpenRead(Path.Combine("templates", "template_customize_item.asm_pc")))
             {
                 newAsm = AssetAssemblerFile.FromStream(newAsmStream);
             }
 
             XDocument customizationItem = null;
-            using (Stream itemsTemplateStream = File.OpenRead("template_customization_items.xtbl"))
+            using (Stream itemsTemplateStream = File.OpenRead(Path.Combine("templates", "template_customization_items.xtbl")))
             {
                 customizationItem = XDocument.Load(itemsTemplateStream);
             }

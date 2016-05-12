@@ -48,10 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Content Include="template_customization_items.xtbl">
+    <Content Include="templates\template_customization_items.xtbl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="template_customize_item.asm_pc">
+    <Content Include="templates\template_customize_item.asm_pc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -66,14 +66,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="template_customize_item.xml">
+    <Content Include="templates\template_customize_item.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if not exist "$(SolutionDir)$(OutDir)" mkdir "$(SolutionDir)$(OutDir)"
-copy /Y "$(TargetDir)$(TargetName).*" "$(SolutionDir)$(OutDir)"</PostBuildEvent>
+copy /Y "$(TargetDir)$(TargetName).*" "$(SolutionDir)$(OutDir)"
+copy /Y "$(TargetDir)ThomasJepp.SaintsRow.*" "$(SolutionDir)$(OutDir)"
+
+if not exist "$(SolutionDir)$(OutDir)templates" mkdir "$(SolutionDir)$(OutDir)templates"
+copy /Y "$(TargetDir)templates" "$(SolutionDir)$(OutDir)templates"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

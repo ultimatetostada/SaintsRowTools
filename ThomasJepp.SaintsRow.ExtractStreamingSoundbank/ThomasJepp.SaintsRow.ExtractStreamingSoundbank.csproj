@@ -110,6 +110,8 @@
     <PostBuildEvent>if not exist "$(SolutionDir)$(OutDir)" mkdir "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)$(TargetName).*" "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)ThomasJepp.SaintsRow.*" "$(SolutionDir)$(OutDir)"
+copy /Y "$(TargetDir)Zlib.Portable.*" "$(SolutionDir)$(OutDir)"
+
 copy /Y "$(TargetDir)*.cmd" "$(SolutionDir)$(OutDir)"
 if not exist "$(SolutionDir)$(OutDir)\external" mkdir "$(SolutionDir)$(OutDir)\external"
 copy /Y "$(TargetDir)external\*.*" "$(SolutionDir)$(OutDir)\external\"</PostBuildEvent>

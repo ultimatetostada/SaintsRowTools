@@ -78,7 +78,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SaintsRow\ThomasJepp.SaintsRow.csproj">
+    <ProjectReference Include="..\ThomasJepp.SaintsRow\ThomasJepp.SaintsRow.csproj">
       <Project>{f660c694-866a-4814-936e-5a180d8543d2}</Project>
       <Name>ThomasJepp.SaintsRow</Name>
     </ProjectReference>

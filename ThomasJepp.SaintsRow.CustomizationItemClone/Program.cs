@@ -243,7 +243,17 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
                                 case ".cmorph_pc":
                                     {
                                         string newFilename = newName + "_pc" + extension;
-                                        newPackfile.AddFile(file.GetStream(), newFilename);
+
+                                        Stream fStream = file.GetStream();
+                                        // copy the morph to the output folder (fixes some odd issues with the morph not applying when loaded from save)
+                                        using (Stream s = File.Create(Path.Combine(outputFolder, newFilename)))
+                                        {
+                                            fStream.CopyTo(s);
+                                        }
+
+                                        fStream.Seek(0, SeekOrigin.Begin);
+
+                                        newPackfile.AddFile(fStream, newFilename);
                                         primitive.Name = newFilename;
                                         break;
                                     }

@@ -19,7 +19,8 @@ mkdir ThomasJepp.SaintsRow-rev%1\external 1>NUL 2>NUL
 copy ..\bin\Release\external\*.* ThomasJepp.SaintsRow-rev%1\external\ 1>NUL 2>NUL
 mkdir ThomasJepp.SaintsRow-rev%1\templates 1>NUL 2>NUL
 copy ..\bin\Release\templates\*.* ThomasJepp.SaintsRow-rev%1\templates\ 1>NUL 2>NUL
-"C:\Program Files\7-Zip\7z.exe" a ..\ThomasJepp.SaintsRow-rev%1.zip ThomasJepp.SaintsRow-rev%1
+"C:\Program Files\7-Zip\7z.exe" a -tzip -mx=9 -mm=Deflate ..\ThomasJepp.SaintsRow-rev%1.zip ThomasJepp.SaintsRow-rev%1
+"C:\Program Files\7-Zip\7z.exe" a -t7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on ..\ThomasJepp.SaintsRow-rev%1.7z ThomasJepp.SaintsRow-rev%1
 cd ..
 rmdir /s /q packaging_temp 1>NUL 2>NUL
 echo Done!

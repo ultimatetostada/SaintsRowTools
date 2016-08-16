@@ -9,3 +9,4 @@ bin/*
 *.opendb
 packages/
 .vs/
+*.7z

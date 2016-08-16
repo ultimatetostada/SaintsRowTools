@@ -112,6 +112,7 @@ copy /Y "$(TargetDir)$(TargetName).*" "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)ThomasJepp.SaintsRow.*" "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)settings.json" "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)Zlib.Portable.*" "$(SolutionDir)$(OutDir)"
+copy /Y "$(TargetDir)Newtonsoft.Json.*" "$(SolutionDir)$(OutDir)"
 
 copy /Y "$(TargetDir)*.cmd" "$(SolutionDir)$(OutDir)"
 if not exist "$(SolutionDir)$(OutDir)\external" mkdir "$(SolutionDir)$(OutDir)\external"

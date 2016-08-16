@@ -11,6 +11,7 @@ copy ..\license.txt ThomasJepp.SaintsRow-rev%1\ 1>NUL 2>NUL
 copy ..\bin\Release\*.exe ThomasJepp.SaintsRow-rev%1\ 1>NUL 2>NUL
 copy ..\bin\Release\*.dll ThomasJepp.SaintsRow-rev%1\ 1>NUL 2>NUL
 copy ..\bin\Release\*.cmd ThomasJepp.SaintsRow-rev%1\ 1>NUL 2>NUL
+copy ..\bin\Release\*.json ThomasJepp.SaintsRow-rev%1\ 1>NUL 2>NUL
 copy ..\bin\x64\Release\*.exe ThomasJepp.SaintsRow-rev%1\x64\ 1>NUL 2>NUL
 copy ..\bin\x64\Release\*.dll ThomasJepp.SaintsRow-rev%1\x64\ 1>NUL 2>NUL
 copy ..\bin\x64\Release\*.cmd ThomasJepp.SaintsRow-rev%1\x64\ 1>NUL 2>NUL

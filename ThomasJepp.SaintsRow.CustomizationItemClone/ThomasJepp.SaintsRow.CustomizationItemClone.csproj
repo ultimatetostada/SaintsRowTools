@@ -77,6 +77,7 @@ copy /Y "$(TargetDir)$(TargetName).*" "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)ThomasJepp.SaintsRow.*" "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)settings.json" "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)Zlib.Portable.*" "$(SolutionDir)$(OutDir)"
+copy /Y "$(TargetDir)Newtonsoft.Json.*" "$(SolutionDir)$(OutDir)"
 if not exist "$(SolutionDir)$(OutDir)templates" mkdir "$(SolutionDir)$(OutDir)templates"
 copy /Y "$(TargetDir)templates" "$(SolutionDir)$(OutDir)templates"</PostBuildEvent>
   </PropertyGroup>

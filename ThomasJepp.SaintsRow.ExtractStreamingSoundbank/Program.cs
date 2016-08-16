@@ -90,30 +90,40 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
             bool failedToFindConversionRequirements = false;
             if (options.ConvertAudio)
             {
-                if (!File.Exists(ww2ogg))
-                {
-                    Console.WriteLine("Could not find ww2ogg.exe at:\n{0}", ww2ogg);
-                    failedToFindConversionRequirements = true;
-                }
+                Platform platform = Utility.DetectPlatform();
 
-                if (!File.Exists(codebooksPath))
+                if (platform == Platform.Windows)
                 {
-                    if (codebooks != null)
-                        Console.WriteLine("Could not find {0} at:\n{1}", codebooks, codebooksPath);
-                    else
-                        Console.WriteLine("Could not find your specified codebooks at:\n{1}", codebooks, codebooksPath);
-                    failedToFindConversionRequirements = true;
-                }
+                    if (!File.Exists(ww2ogg))
+                    {
+                        Console.WriteLine("Could not find ww2ogg.exe at:\n{0}", ww2ogg);
+                        failedToFindConversionRequirements = true;
+                    }
 
-                if (!File.Exists(revorb))
-                {
-                    Console.WriteLine("Could not find revorb.exe at:\n{0}", revorb);
-                    failedToFindConversionRequirements = true;
-                }
+                    if (!File.Exists(codebooksPath))
+                    {
+                        if (codebooks != null)
+                            Console.WriteLine("Could not find {0} at:\n{1}", codebooks, codebooksPath);
+                        else
+                            Console.WriteLine("Could not find your specified codebooks at:\n{1}", codebooks, codebooksPath);
+                        failedToFindConversionRequirements = true;
+                    }
 
-                if (failedToFindConversionRequirements)
+                    if (!File.Exists(revorb))
+                    {
+                        Console.WriteLine("Could not find revorb.exe at:\n{0}", revorb);
+                        failedToFindConversionRequirements = true;
+                    }
+
+                    if (failedToFindConversionRequirements)
+                    {
+                        Console.WriteLine("Can't convert audio.");
+                    }
+                }
+                else
                 {
-                    Console.WriteLine("Can't convert audio.");
+                    Console.WriteLine("Audio conversion is only available on Windows.");
+                    failedToFindConversionRequirements = true;
                 }
             }
 
@@ -226,7 +236,7 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
                     if (failedToFindConversionRequirements)
                     {
                         Console.WriteLine();
-                        Console.WriteLine("Unable to convert extracted audio due to missing required files.");
+                        Console.WriteLine("Unable to convert extracted audio.");
                     }
                     else
                     {

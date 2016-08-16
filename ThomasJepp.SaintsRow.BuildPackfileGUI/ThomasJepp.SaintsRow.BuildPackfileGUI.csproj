@@ -90,6 +90,7 @@
     <PostBuildEvent>if not exist "$(SolutionDir)$(OutDir)" mkdir "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)$(TargetName).*" "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)ThomasJepp.SaintsRow.*" "$(SolutionDir)$(OutDir)"
+copy /Y "$(TargetDir)settings.json" "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)Zlib.Portable.*" "$(SolutionDir)$(OutDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -10,3 +10,4 @@ bin/*
 packages/
 .vs/
 *.7z
+*.db

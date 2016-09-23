@@ -28,10 +28,10 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
             [CommandLineParameter(Name = "output", ParameterIndex = 3, Required = false, Description = "The location to save the extracted data. If not specified, the packfile will be extracted to a new folder with the same name in the current directory.")]
             public string Output { get; set; }
 
-            [CommandLineParameter(Command = "convert", Default = true, Description = @"Convert the audio into playble OGG files. Requires ww2ogg and revorb in the ""external"" directory. Valid options are ""true"" and ""false"". Defaults to ""true"".", Name = "Convert audio")]
+            [CommandLineParameter(Command = "convert", Default = true, Description = @"Convert the audio into playble OGG files. Requires ww2ogg and revorb in the ""external"" directory. Valid options are ""true"" and ""false"". Defaults to ""true"".", Name = "Convert audio", ValueExample = "true|false")]
             public bool ConvertAudio { get; set; }
 
-            [CommandLineParameter(Command = "codebooks", Default = null, Description = @"Override the codebooks in use by revorb. This should be a full path to a codebooks file.", Name = "Codebooks")]
+            [CommandLineParameter(Command = "codebooks", Default = null, Description = @"Override the codebooks in use by revorb. This should be a full path to a codebooks file. Defaults to ""packed_codebooks.bin"" for SRTT files, and ""packed_codebooks_aoTuV_603.bin"" for SRIV/SRGOOH.", Name = "Codebooks", ValueExample = "(codebooks file)")]
             public string Codebooks { get; set; }
         }
 

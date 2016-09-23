@@ -12,7 +12,7 @@ namespace ThomasJepp.SaintsRow.ConvertClothSim
 {
     class Program
     {
-[CommandLineArguments(Program = "ThomasJepp.SaintsRow.ConvertClothSim", Title = "Saints Row Cloth Sim Converter", Description = "Converts cloth sim files between different format versions.")]
+[CommandLineArguments(Program = "ThomasJepp.SaintsRow.ConvertClothSim", Title = "Saints Row Cloth Sim Converter", Description = "Converts cloth sim files between SRTT/SRIV and SRGOOH.")]
         internal class Options
         {
             [CommandLineParameter(Name = "source", ParameterIndex = 1, Required = true, Description = "The original sim_pc file.")]

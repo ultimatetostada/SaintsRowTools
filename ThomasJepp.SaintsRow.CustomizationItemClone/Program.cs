@@ -242,7 +242,9 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
 
                                 case ".cmorph_pc":
                                     {
-                                        string newFilename = newName + "_pc" + extension;
+                                        string morphSuffix = Path.GetFileNameWithoutExtension(file.Name).Split('_').Last();
+
+                                        string newFilename = newName + "_" + morphSuffix + extension;
 
                                         Stream fStream = file.GetStream();
                                         // copy the morph to the output folder (fixes some odd issues with the morph not applying when loaded from save)
@@ -423,6 +425,11 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
             if (itemNode == null)
             {
                 Console.WriteLine("Couldn't find {0}.", options.Source);
+
+#if DEBUG
+                Console.ReadLine();
+#endif
+
                 return;
             }
 
@@ -449,6 +456,7 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
             }
 
             var wearOptionsNode = itemNode.Element("Wear_Options");
+            int wearOption = 0;
             foreach (var wearOptionNode in wearOptionsNode.Descendants("Wear_Option"))
             {
                 var meshInformationNode = wearOptionNode.Element("Mesh_Information");
@@ -456,24 +464,30 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
                 var filenameNode = maleMeshFilenameNode.Element("Filename");
                 string maleMeshFilename = filenameNode.Value;
 
-                string newMaleMeshFilename = "cm_" + options.NewName + ".cmeshx";
+                
+                string newMaleMeshFilename = (wearOption == 0) ? String.Format("cm_{0}.cmeshx", options.NewName) : String.Format("cm_{0}_{1}.cmeshx", options.NewName, wearOption);
                 filenameNode.Value = newMaleMeshFilename;
 
                 var femaleMeshFilenameNode = meshInformationNode.Element("Female_Mesh_Filename");
                 filenameNode = femaleMeshFilenameNode.Element("Filename");
+                string femaleMeshFilename = filenameNode.Value;
 
-                string newFemaleMeshFilename = "cf_" + options.NewName + ".cmeshx";
+                string newFemaleMeshFilename = (wearOption == 0) ? String.Format("cf_{0}.cmeshx", options.NewName) : String.Format("cf_{0}_{1}.cmeshx", options.NewName, wearOption);
                 filenameNode.Value = newFemaleMeshFilename;
+
+                Console.WriteLine("Mapping mesh {0} -> {1}", maleMeshFilename, newMaleMeshFilename);
+                Console.WriteLine("Mapping mesh {0} -> {1}", femaleMeshFilename, newFemaleMeshFilename);
 
                 string clothSimFilename = null;
                 var clothSimFilenameNode = meshInformationNode.Element("Cloth_Sim_Filename");
                 if (clothSimFilenameNode != null)
                 {
                     filenameNode = clothSimFilenameNode.Element("Filename");
-                    clothSimFilename = filenameNode.Value;
-                    clothSimFilename = Path.ChangeExtension(clothSimFilename, ".sim_pc");
-                    string newClothSimFilename = "cm_" + options.NewName + ".simx";
+                    string xmlClothSimFilename = filenameNode.Value;
+                    clothSimFilename = Path.ChangeExtension(xmlClothSimFilename, ".sim_pc");
+                    string newClothSimFilename = (wearOption == 0) ? String.Format("cm_{0}.simx", options.NewName) : String.Format("cm_{0}_{1}.simx", options.NewName, wearOption);
                     filenameNode.Value = newClothSimFilename;
+                    Console.WriteLine("Mapping cloth sim {0} -> {1}", xmlClothSimFilename, newClothSimFilename);
                 }
 
                 var variantNodes = itemNode.Element("Variants").Descendants("Variant");
@@ -492,14 +506,19 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
                     string newMaleStr2 = String.Format("custmesh_{0}.str2_pc", newCrc);
                     string newFemaleStr2 = String.Format("custmesh_{0}f.str2_pc", newCrc);
 
-                    bool foundMale = ClonePackfile(sriv, maleStr2, clothSimFilename, options.Output, newAsm, itemName, "cm_" + options.NewName, Path.Combine(outputFolder, newMaleStr2));
-                    bool foundFemale = ClonePackfile(sriv, femaleStr2, clothSimFilename, options.Output, newAsm, itemName, "cf_" + options.NewName, Path.Combine(outputFolder, newFemaleStr2));
+                    string newMaleName = (wearOption == 0) ? String.Format("cm_{0}", options.NewName) : String.Format("cm_{0}_{1}", options.NewName, wearOption);
+                    string newFemaleName = (wearOption == 0) ? String.Format("cf_{0}", options.NewName) : String.Format("cf_{0}_{1}", options.NewName, wearOption);
+
+                    bool foundMale = ClonePackfile(sriv, maleStr2, clothSimFilename, options.Output, newAsm, itemName, newMaleName, Path.Combine(outputFolder, newMaleStr2));
+                    bool foundFemale = ClonePackfile(sriv, femaleStr2, clothSimFilename, options.Output, newAsm, itemName, newFemaleName, Path.Combine(outputFolder, newFemaleStr2));
 
                     if (foundMale || foundFemale)
                     {
                         found = true;
                     }
                 }
+
+                wearOption++;
             }
 
             if (found)
@@ -581,6 +600,11 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
                     xml.WriteEndDocument();
                 }
             }
+
+            Console.WriteLine("Finished cloning customization item {0} to {1}!", options.Source, options.NewName);
+#if DEBUG
+            Console.ReadLine();
+#endif
         }
     }
 }

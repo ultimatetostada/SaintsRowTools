@@ -130,6 +130,14 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
             return outStream;
         }
 
+        static string FilterPegEntryFilename(string name)
+        {
+            if (name.ToLowerInvariant().StartsWith("cf_") || name.ToLowerInvariant().StartsWith("cm_"))
+                return name.Substring(3);
+            else
+                return name;
+        }
+
         static Stream ProcessPeg(IPackfileEntry pegEntry, string newName)
         {
             textureNameMap.Clear();
@@ -138,10 +146,10 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
             {
                 PegFile peg = new PegFile(pegStream);
 
-                string sharedPrefix = peg.Entries[0].Filename;
+                string sharedPrefix = FilterPegEntryFilename(peg.Entries[0].Filename);
                 foreach (PegEntry entry in peg.Entries)
                 {
-                    while (!entry.Filename.StartsWith(sharedPrefix))
+                    while (!FilterPegEntryFilename(entry.Filename).StartsWith(sharedPrefix))
                     {
                         sharedPrefix = sharedPrefix.Substring(0, sharedPrefix.Length - 1);
                     }
@@ -157,6 +165,10 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
                     else
                     {
                         newFilename = entry.Filename.Replace(sharedPrefix, newName + "_").ToLowerInvariant();
+                        if (newFilename.StartsWith("cf_cf_") || newFilename.StartsWith("cf_cm_") || newFilename.StartsWith("cm_cf_") || newFilename.StartsWith("cm_cm_"))
+                        {
+                            newFilename = newFilename.Remove(3, 3);
+                        } 
                     }
 
                     if (!textureNameMap.ContainsKey(entry.Filename))

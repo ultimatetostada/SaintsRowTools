@@ -63,23 +63,9 @@ namespace ThomasJepp.SaintsRow.BuildStrings
             Language language = LanguageUtility.GetLanguageFromCode(languageString);
             IGameInstance instance = GameInstance.GetFromString(gameString);
 
+            StringFile stringFile = new StringFile(language, instance);
+
             var stringNodes = stringsNode.Descendants("String");
-
-            UInt16 bucketCount = (UInt16)(stringNodes.Count() / 5);
-            if (bucketCount < 32)
-                bucketCount = 32;
-            else if (bucketCount < 64)
-                bucketCount = 64;
-            else if (bucketCount < 128)
-                bucketCount = 128;
-            else if (bucketCount < 256)
-                bucketCount = 256;
-            else if (bucketCount < 512)
-                bucketCount = 512;
-            else 
-                bucketCount = 1024;
-
-            StringFile stringFile = new StringFile(bucketCount, language, instance);
 
             foreach (var stringNode in stringNodes)
             {

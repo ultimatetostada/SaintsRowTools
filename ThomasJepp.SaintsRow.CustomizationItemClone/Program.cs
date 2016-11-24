@@ -565,7 +565,7 @@ namespace ThomasJepp.SaintsRow.CustomizationItemClone
                 Language language = pair.Key;
                 Dictionary<uint, string> strings = pair.Value;
 
-                StringFile file = new StringFile(1, language, sriv);
+                StringFile file = new StringFile(language, sriv);
 
                 string newString = "CLONE: " + options.NewName;
                 if (strings.ContainsKey(originalStringCrc))

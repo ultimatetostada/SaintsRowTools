@@ -117,6 +117,24 @@ namespace ThomasJepp.SaintsRow.Stream2Update
                             Console.WriteLine("Updating Saints Row: Gat Out Of Hell files.");
                         }
                     }
+                    else if (input.Key == ConsoleKey.D3 || input.Key == ConsoleKey.NumPad3)
+                    {
+                        if (srttNum == 3)
+                        {
+                            options.Source = srtt;
+                            Console.WriteLine("Updating Saints Row: The Third files.");
+                        }
+                        else if (srivNum == 3)
+                        {
+                            options.Source = sriv;
+                            Console.WriteLine("Updating Saints Row IV files.");
+                        }
+                        else if (srgoohNum == 3)
+                        {
+                            options.Source = srgooh;
+                            Console.WriteLine("Updating Saints Row: Gat Out Of Hell files.");
+                        }
+                    }
 
                     if (options.Source != null)
                         break;

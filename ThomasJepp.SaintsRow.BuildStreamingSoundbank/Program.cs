@@ -85,22 +85,28 @@ namespace ThomasJepp.SaintsRow.BuildStreamingSoundbank
                                 metadata.Header.VoicelineID = voicelineId;
                                 metadata.Header.WavLengthMs = wavLengthMs;
 
-                                if (metadataReader.ReadToFollowing("subtitles"))
+                                while (metadataReader.Read())
                                 {
-                                    while (metadataReader.ReadToFollowing("subtitle"))
+                                    if (metadataReader.LocalName == "lipsync")
                                     {
-                                        string languageString = metadataReader.GetAttribute("language");
-                                        metadataReader.Read();
-                                        string text = metadataReader.ReadContentAsString();
-                                        Language language = LanguageUtility.GetLanguageFromCode(languageString);
-                                        metadata.Subtitles.Add(language, text);
+                                        string lipsyncBase64 = metadataReader.ReadElementContentAsString();
+                                        metadata.LipsyncData = Convert.FromBase64String(lipsyncBase64);
                                     }
-                                }
-
-                                if (metadataReader.ReadToFollowing("lipsync"))
-                                {
-                                    string lipsyncBase64 = metadataReader.ReadContentAsString();
-                                    metadata.LipsyncData = Convert.FromBase64String(lipsyncBase64);
+                                    else if (metadataReader.LocalName == "subtitles")
+                                    {
+                                        using (XmlReader subtitleReader = reader.ReadSubtree())
+                                        {
+                                            subtitleReader.Read();
+                                            while (subtitleReader.ReadToFollowing("subtitle"))
+                                            {
+                                                string languageString = subtitleReader.GetAttribute("language");
+                                                subtitleReader.Read();
+                                                string text = subtitleReader.ReadContentAsString();
+                                                Language language = LanguageUtility.GetLanguageFromCode(languageString);
+                                                metadata.Subtitles.Add(language, text);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             metadataStream = new MemoryStream();

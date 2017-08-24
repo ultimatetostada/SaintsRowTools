@@ -15,10 +15,34 @@ namespace ThomasJepp.SaintsRow.RecursiveExtractor
             [CommandLineParameter(Name = "source", ParameterIndex = 1, Required = true, Description = "The folder containing packfiles to extract.")]
             public string Source { get; set; }
 
-            [CommandLineParameter(Name = "output", ParameterIndex = 2, Required = false, Default="output", Description = "The folder to extract the packfiles to. This will be created if it does not already exist. If not specified, a folder named \"output\" will be created in the current directory.")]
+            [CommandLineParameter(Name = "output", ParameterIndex = 2, Required = false, Default = "output", Description = "The folder to extract the packfiles to. This will be created if it does not already exist. If not specified, a folder named \"output\" will be created in the current directory.")]
             public string Output { get; set; }
-       }
+        }
 
+        static int FindPackfiles(string dir, Dictionary<string, IPackfile> packfiles)
+        {
+            int totalFiles = 0;
+
+            string[] files = Directory.GetFiles(dir);
+            foreach (string file in files)
+            {
+                if (Path.GetExtension(file) == ".vpp_pc")
+                {
+                    var packfile = Packfile.FromStream(File.OpenRead(file), false);
+                    totalFiles += packfile.Files.Count;
+                    packfiles.Add(Path.GetFileName(file), packfile);
+                }
+            }
+            string[] dirs = Directory.GetDirectories(dir);
+            foreach (string subDir in dirs)
+            {
+                totalFiles += FindPackfiles(subDir, packfiles);
+            }
+
+            return totalFiles;
+        }
+
+        public static StreamWriter logOut = new StreamWriter("log.txt", false, new System.Text.UTF8Encoding(false));
         static void Main(string[] args)
         {
             Options options = null;
@@ -40,25 +64,11 @@ namespace ThomasJepp.SaintsRow.RecursiveExtractor
             }
 
             Directory.CreateDirectory(options.Output);
-
-            string[] files = Directory.GetFiles(options.Source);
-
+           
             Dictionary<string, IPackfile> packfiles = new Dictionary<string, IPackfile>();
 
-            int totalFiles = 0;
-
             Console.Write("Looking for packfiles... ");
-
-            foreach (string file in files)
-            {
-                if (Path.GetExtension(file) == ".vpp_pc")
-                {
-                    var packfile = Packfile.FromStream(File.OpenRead(file), false);
-                    totalFiles += packfile.Files.Count;
-                    packfiles.Add(Path.GetFileName(file), packfile);
-                }
-            }
-
+            int totalFiles = FindPackfiles(options.Source, packfiles);
             Console.WriteLine("found {0} packfiles, containing {1} files.", packfiles.Count, totalFiles);
 
             int currentFile = 0;
@@ -72,9 +82,19 @@ namespace ThomasJepp.SaintsRow.RecursiveExtractor
                     currentFile++;
                     if (Path.GetExtension(file.Name) == ".str2_pc")
                     {
-                        string strOutputFolder = Path.Combine(options.Output, packfilePair.Key, file.Name);
+                        string outputPath;
+                        if (file.Path != null)
+                        {
+                            outputPath = Path.Combine(options.Output, packfilePair.Key, file.Path);
+                        }
+                        else
+                        {
+                            outputPath = Path.Combine(options.Output, packfilePair.Key);
+                        }
+
+                        string strOutputFolder = Path.Combine(outputPath, file.Name);
                         Directory.CreateDirectory(strOutputFolder);
-                        Console.WriteLine("[{0}/{1}] Extracting {2}: packfile {3} to {4}:", currentFile, totalFiles, packfilePair.Key, file.Name, strOutputFolder);
+                        //Console.WriteLine("[{0}/{1}] Extracting {2}: packfile {3} to {4}:", currentFile, totalFiles, packfilePair.Key, file.Name, strOutputFolder);
                         using (Stream strStream = file.GetStream())
                         {
                             using (var strPackfile = Packfile.FromStream(strStream, true))
@@ -83,34 +103,76 @@ namespace ThomasJepp.SaintsRow.RecursiveExtractor
 
                                 foreach (var strFile in strPackfile.Files)
                                 {
+                                    string strFileOutputPath;
+                                    if (strFile.Path != null)
+                                    {
+                                        strFileOutputPath = Path.Combine(strOutputFolder, strFile.Path);
+                                        Directory.CreateDirectory(strFileOutputPath);
+                                    }
+                                    else
+                                    {
+                                        strFileOutputPath = strOutputFolder;
+                                    }
+
                                     strCurrentFile++;
 
-                                    Console.Write("[{0}/{1}] [{2}/{3}] Extracting {4}\\{5}: {6}", currentFile, totalFiles, strCurrentFile, strPackfile.Files.Count, packfilePair.Key, file.Name, strFile.Name);
-                                    using (Stream outputStream = File.Create(Path.Combine(strOutputFolder, strFile.Name)))
+                                    //Console.Write("[{0}/{1}] [{2}/{3}] Extracting {4}\\{5}: {6}", currentFile, totalFiles, strCurrentFile, strPackfile.Files.Count, packfilePair.Key, file.Name, strFile.Name);
+                                    try
                                     {
-                                        using (Stream inputStream = strFile.GetStream())
+                                        using (Stream outputStream = File.Create(Path.Combine(strFileOutputPath, strFile.Name)))
                                         {
-                                            inputStream.CopyTo(outputStream);
+                                            using (Stream inputStream = strFile.GetStream())
+                                            {
+                                                inputStream.CopyTo(outputStream);
+                                            }
+                                            outputStream.Flush();
                                         }
-                                        outputStream.Flush();
+                                        //Console.WriteLine("done.");
                                     }
-                                    Console.WriteLine("done.");
+                                    catch (Exception ex)
+                                    {
+                                        //Console.WriteLine("error extracting!");
+                                        logOut.WriteLine("Error extracting: {0}\\{1}: {2} - {3}", packfilePair.Key, file.Name, strFile.Name, ex.Message);
+                                        logOut.Flush();
+                                    }
+                                    
                                 }
                             }
                         }
                     }
                     else
                     {
-                        Console.Write("[{0}/{1}] Extracting {2}: {3}... ", currentFile, totalFiles, packfilePair.Key, file.Name);
-                        using (Stream outputStream = File.Create(Path.Combine(options.Output, packfilePair.Key, file.Name)))
+                        //Console.Write("[{0}/{1}] Extracting {2}: {3}... ", currentFile, totalFiles, packfilePair.Key, file.Name);
+
+                        string outputPath;
+                        if (file.Path != null)
                         {
-                            using (Stream inputStream = file.GetStream())
-                            {
-                                inputStream.CopyTo(outputStream);
-                            }
-                            outputStream.Flush();
+                            outputPath = Path.Combine(options.Output, packfilePair.Key, file.Path);
+                            Directory.CreateDirectory(outputPath);
                         }
-                        Console.WriteLine("done.");
+                        else
+                        {
+                            outputPath = Path.Combine(options.Output, packfilePair.Key);
+                        }
+
+                        try
+                        {
+                            using (Stream outputStream = File.Create(Path.Combine(outputPath, file.Name)))
+                            {
+                                using (Stream inputStream = file.GetStream())
+                                {
+                                    inputStream.CopyTo(outputStream);
+                                }
+                                outputStream.Flush();
+                            }
+                            //Console.WriteLine("done.");
+                        }
+                        catch (Exception ex)
+                        {
+                            //Console.WriteLine("error extracting!");
+                            logOut.WriteLine("Error extracting: {0}: {1} - {2}", packfilePair.Key, file.Name, ex.Message);
+                            logOut.Flush();
+                        }
                     }
                 }
             }

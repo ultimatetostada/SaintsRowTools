@@ -55,16 +55,36 @@ namespace ThomasJepp.SaintsRow.ExtractPackfile
                 {
                     currentFile++;
 
-                    Console.Write("[{0}/{1}] Extracting {2}... ", currentFile, packfile.Files.Count, entry.Name);
-                    using (Stream outputStream = File.Create(Path.Combine(folderName, entry.Name)))
+                    Console.Write("[{0}/{1}] Extracting {2}... ", currentFile, packfile.Files.Count, entry.FullPath);
+
+                    string outputPath;
+                    if (entry.Path != null)
                     {
-                        using (Stream inputStream = entry.GetStream())
-                        {
-                            inputStream.CopyTo(outputStream);
-                        }
-                        outputStream.Flush();
+                        outputPath = Path.Combine(folderName, entry.Path);
+                        Directory.CreateDirectory(outputPath);
                     }
-                    Console.WriteLine("done.");
+                    else
+                    {
+                        outputPath = folderName;
+                    }
+
+                    try
+                    {
+                        using (Stream outputStream = File.Create(Path.Combine(outputPath, entry.Name)))
+                        {
+                            using (Stream inputStream = entry.GetStream())
+                            {
+                                inputStream.CopyTo(outputStream);
+                            }
+                            outputStream.Flush();
+                        }
+                        Console.WriteLine("done.");
+                    }
+                    catch
+                    {
+                        Console.WriteLine("error!");
+                        Console.ReadLine();
+                    }
                 }
 
 #if DEBUG

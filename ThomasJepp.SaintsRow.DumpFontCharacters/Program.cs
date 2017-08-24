@@ -154,6 +154,10 @@ namespace ThomasJepp.SaintsRow.ExtractFont
                         uncompressed = ManagedSquish.Squish.DecompressImage(bitmapData, entry.Data.Width, entry.Data.Height, ManagedSquish.SquishFlags.Dxt5);
                         break;
 
+                    case PegBitmapFormat.D3DFMT_A8R8G8B8:
+                        uncompressed = bitmapData;
+                        break;
+
                     default: throw new Exception();
                 }
 

@@ -201,18 +201,56 @@ namespace ThomasJepp.SaintsRow.ExtractStreamingSoundbank
                                     if (metadata.Header.SubtitleSize > 0)
                                     {
                                         writer.WriteStartElement("subtitles");
-                                        writer.WriteAttributeString("version", metadata.SubtitleHeader.Version.ToString());
+                                        writer.WriteAttributeString("version", metadata.SubtitleVersion.ToString());
 
-                                        foreach (var subtitle in metadata.Subtitles)
+                                        switch (metadata.SubtitleVersion)
                                         {
-                                            Language language = subtitle.Key;
-                                            string text = subtitle.Value;
+                                            case 2:
+                                                writer.WriteStartElement("male");
+                                                foreach (var subtitle in metadata.MaleSubtitles)
+                                                {
+                                                    Language language = subtitle.Key;
+                                                    string text = subtitle.Value;
 
-                                            writer.WriteStartElement("subtitle");
-                                            writer.WriteAttributeString("language", language.ToString());
-                                            writer.WriteString(text);
-                                            writer.WriteEndElement(); // subtitle
+                                                    writer.WriteStartElement("subtitle");
+                                                    writer.WriteAttributeString("language", language.ToString());
+                                                    writer.WriteString(text);
+                                                    writer.WriteEndElement(); // subtitle
+                                                }
+                                                writer.WriteEndElement(); // male
+
+                                                writer.WriteStartElement("female");
+                                                foreach (var subtitle in metadata.MaleSubtitles)
+                                                {
+                                                    Language language = subtitle.Key;
+                                                    string text = subtitle.Value;
+
+                                                    writer.WriteStartElement("subtitle");
+                                                    writer.WriteAttributeString("language", language.ToString());
+                                                    writer.WriteString(text);
+                                                    writer.WriteEndElement(); // subtitle
+                                                }
+                                                writer.WriteEndElement(); // female
+                                                break;
+
+                                            case 3:
+                                                foreach (var subtitle in metadata.Subtitles)
+                                                {
+                                                    Language language = subtitle.Key;
+                                                    string text = subtitle.Value;
+
+                                                    writer.WriteStartElement("subtitle");
+                                                    writer.WriteAttributeString("language", language.ToString());
+                                                    writer.WriteString(text);
+                                                    writer.WriteEndElement(); // subtitle
+                                                }
+                                                break;
+
+                                            default:
+                                                throw new NotImplementedException();
                                         }
+
+                                        
                                         writer.WriteEndElement(); // subtitles
                                     }
 

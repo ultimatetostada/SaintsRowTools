@@ -94,17 +94,74 @@ namespace ThomasJepp.SaintsRow.BuildStreamingSoundbank
                                     }
                                     else if (metadataReader.LocalName == "subtitles")
                                     {
-                                        using (XmlReader subtitleReader = reader.ReadSubtree())
+                                        uint subtitleVersion = uint.Parse(metadataReader.GetAttribute("version"));
+                                        metadata.SubtitleVersion = subtitleVersion;
+                                        switch (subtitleVersion)
                                         {
-                                            subtitleReader.Read();
-                                            while (subtitleReader.ReadToFollowing("subtitle"))
-                                            {
-                                                string languageString = subtitleReader.GetAttribute("language");
-                                                subtitleReader.Read();
-                                                string text = subtitleReader.ReadContentAsString();
-                                                Language language = LanguageUtility.GetLanguageFromCode(languageString);
-                                                metadata.Subtitles.Add(language, text);
-                                            }
+                                            case 2:
+                                                using (XmlReader subtitlesReader = metadataReader.ReadSubtree())
+                                                {
+                                                    subtitlesReader.Read();
+                                                    using (XmlReader genderReader = subtitlesReader.ReadSubtree())
+                                                    {
+                                                        genderReader.Read();
+
+                                                        while (genderReader.Read())
+                                                        {
+                                                            if (genderReader.LocalName == "male" && genderReader.IsStartElement())
+                                                            {
+                                                                using (XmlReader subtitleReader = genderReader.ReadSubtree())
+                                                                {
+                                                                    subtitleReader.Read();
+                                                                    while (subtitleReader.ReadToFollowing("subtitle"))
+                                                                    {
+                                                                        string languageString = subtitleReader.GetAttribute("language");
+                                                                        subtitleReader.Read();
+                                                                        string text = subtitleReader.ReadContentAsString();
+                                                                        Language language = LanguageUtility.GetLanguageFromCode(languageString);
+                                                                        metadata.MaleSubtitles.Add(language, text);
+                                                                    }
+                                                                }
+                                                            }
+                                                            else if (genderReader.LocalName == "female" && genderReader.IsStartElement())
+                                                            {
+                                                                using (XmlReader subtitleReader = genderReader.ReadSubtree())
+                                                                {
+                                                                    subtitleReader.Read();
+                                                                    while (subtitleReader.ReadToFollowing("subtitle"))
+                                                                    {
+                                                                        string languageString = subtitleReader.GetAttribute("language");
+                                                                        subtitleReader.Read();
+                                                                        string text = subtitleReader.ReadContentAsString();
+                                                                        Language language = LanguageUtility.GetLanguageFromCode(languageString);
+
+                                                                        metadata.FemaleSubtitles.Add(language, text);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            break;
+
+                                            case 3:
+                                                using (XmlReader subtitleReader = metadataReader.ReadSubtree())
+                                                {
+                                                    subtitleReader.Read();
+                                                    while (subtitleReader.ReadToFollowing("subtitle"))
+                                                    {
+                                                        string languageString = subtitleReader.GetAttribute("language");
+                                                        subtitleReader.Read();
+                                                        string text = subtitleReader.ReadContentAsString();
+                                                        Language language = LanguageUtility.GetLanguageFromCode(languageString);
+                                                        metadata.Subtitles.Add(language, text);
+                                                    }
+                                                }
+                                                break;
+
+                                            default:
+                                                throw new NotImplementedException();
+                                                break;
                                         }
                                     }
                                 }
